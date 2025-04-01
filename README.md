@@ -1,4 +1,4 @@
-# GameContentsDesgin
+# GameContentsDesign
 <br>
 
 ## Overview
