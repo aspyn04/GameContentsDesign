@@ -19,11 +19,6 @@
 - **🐙 GitHub** 
 <br>
 
-## Development Roadmap  
-Update Soon
-<br>
-<br>
-
 ## Development Process
 Update Soon
 <br>
