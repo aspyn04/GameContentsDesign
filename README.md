@@ -2,7 +2,7 @@
 <br>
 
 ## Overview
-- **🎮 Genre :** Management Simulation
+- **🎮 Genre :** Management Simulation, Tycoon
 - **💻 Platform :** PC
 - **🛠 Engine :** Unity
 <br>
