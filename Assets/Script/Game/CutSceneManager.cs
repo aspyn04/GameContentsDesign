@@ -1,18 +1,19 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class CutSceneManager : MonoBehaviour
+public class CutsceneManager : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    [SerializeField] private GameObject cutscenePanel;
+
+    public bool HasCutsceneForDay(int day)
     {
-        
+        return day == 5 || day == 10;
     }
 
-    // Update is called once per frame
-    void Update()
+    public IEnumerator PlayCutscene(int day)
     {
-        
+        cutscenePanel.SetActive(true);
+        yield return new WaitForSecondsRealtime(3f);
+        cutscenePanel.SetActive(false);
     }
 }

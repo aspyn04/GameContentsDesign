@@ -4,54 +4,43 @@ using UnityEngine;
 
 public class NPCManager : MonoBehaviour
 {
-    public NPCDataManager npcDataManager;
-    public GameObject tartCrust; // 타르트 제작 시작 오브젝트
-    public GameObject dialoguePanel;
-    public Text dialogueText;
-    public Button nextButton;
+    public List<NPCData> npcDataList;
+    public TartManager tartManager;
+    public DialogUI dialogUI;
 
-    private NPCData currentGuest;
-    private int dialogueStep = 0;
-
-    private void Start()
+    public void StartGuestLoop()
     {
-        dialoguePanel.SetActive(false);
-        tartCrust.SetActive(false);
+        StartCoroutine(GuestLoopRoutine());
     }
 
-    public void StartGuestSequence()
+    IEnumerator GuestLoopRoutine()
     {
-        // 1. 랜덤 손님 선택
-        if (npcDataManager.NPCDataList.Count == 0) return;
-        currentGuest = npcDataManager.NPCDataList[Random.Range(0, npcDataManager.NPCDataList.Count)];
-
-        dialogueStep = 0;
-        ShowDialogue();
-    }
-
-    private void ShowDialogue()
-    {
-        dialoguePanel.SetActive(true);
-
-        switch (dialogueStep)
+        while (!TimeManager.Instance.IsDayEnded())
         {
-            case 0:
-                dialogueText.text = currentGuest.greetingDialogue;
-                break;
-            case 1:
-                dialogueText.text = currentGuest.orderDialogue;
-                break;
-            case 2:
-                dialoguePanel.SetActive(false);
-                tartCrust.SetActive(true); // 타르트 제작 시작
-                break;
+            NPCData guest = GetRandomGuest();
+            yield return StartCoroutine(HandleGuest(guest));
+            yield return new WaitForSeconds(1f);
         }
     }
 
-    public void OnNextButtonPressed()
+    NPCData GetRandomGuest()
     {
-        dialogueStep++;
-        ShowDialogue();
+        return npcDataList[Random.Range(0, npcDataList.Count)];
+    }
+
+    IEnumerator HandleGuest(NPCData guest)
+    {
+        yield return dialogUI.Show(guest.greetingDialogue);
+        yield return dialogUI.Show(guest.orderDialogue);
+        yield return dialogUI.WaitForMakeTartClick();
+
+        tartManager.StartTartMaking(guest);
+
+        yield return new WaitUntil(() => tartManager.IsTartComplete);
+
+        bool success = tartManager.CheckTartResult();
+        string result = success ? guest.satisfiedDialogue : guest.unsatisfiedDialogue;
+
+        yield return dialogUI.Show(result);
     }
 }
-

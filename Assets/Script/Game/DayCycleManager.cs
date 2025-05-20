@@ -1,53 +1,56 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class DayCycleManager : MonoBehaviour
 {
     [SerializeField] private GameObject endOfDayPanel;
-    private void Start()
+    [SerializeField] private CutsceneManager cutsceneManager;
+    [SerializeField] private NPCManager npcManager;
+
+    void Start()
     {
         if (TimeManager.Instance != null)
-        {
             TimeManager.Instance.OnDayEnded += HandleDayEnded;
-        }
-        else
-        {
-            Debug.LogError("TimeManager.Instance가 null입니다. 이벤트 구독 실패.");
-        }
+
+        StartCoroutine(StartDayRoutine());
     }
 
     private void OnDestroy()
     {
         if (TimeManager.Instance != null)
-        {
             TimeManager.Instance.OnDayEnded -= HandleDayEnded;
+    }
+
+    IEnumerator StartDayRoutine()
+    {
+        int day = TimeManager.Instance.currentDay;
+
+        if (cutsceneManager.HasCutsceneForDay(day))
+        {
+            Time.timeScale = 0f;
+            yield return cutsceneManager.PlayCutscene(day);
+            Time.timeScale = 1f;
         }
+
+        npcManager.StartGuestLoop();
     }
 
     void HandleDayEnded()
     {
         endOfDayPanel.SetActive(true);
-        Time.timeScale = 0f; // 일시정지
-        // 하루가 끝날 때의 처리
-        //ResourceManager.Instance.ProcessDailyIncome();
-
-        //TimeManager.Instance.SaveGame();
+        Time.timeScale = 0f;
     }
-
 
     public void ProceedToNextDay()
     {
         Time.timeScale = 1f;
         TimeManager.Instance.currentDay++;
+        TimeManager.Instance.ResetDay(); 
         endOfDayPanel.SetActive(false);
 
-        FindObjectOfType<TimeUI>()?.ForceUpdateUI();
-
         if (TimeManager.Instance.currentDay > 30)
-        {
             Debug.Log("게임 종료!");
-        }
+        else
+            StartCoroutine(StartDayRoutine());
     }
 }
-

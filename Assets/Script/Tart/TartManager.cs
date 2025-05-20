@@ -4,15 +4,41 @@ using UnityEngine;
 
 public class TartManager : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    public RecipeManager recipeManager;
+    private TartRecipe currentRecipe;
+
+    private bool crustSuccess, ovenSuccess, toppingSuccess;
+    public bool IsTartComplete => crustSuccess && ovenSuccess && toppingSuccess;
+
+    public void StartTartMaking(NPCData guest)
     {
-        
+        int code = recipeManager.GetTartCodeByName(guest.orderedTart);
+        currentRecipe = recipeManager.GetRecipeByCode(code);
+
+        crustSuccess = ovenSuccess = toppingSuccess = false;
+
+        FindObjectOfType<TartCrust>().StartCrust(currentRecipe.crustOrder, this);
     }
 
-    // Update is called once per frame
-    void Update()
+    public void SetCrustResult(bool success)
     {
-        
+        crustSuccess = success;
+        FindObjectOfType<TartOven>().StartOven(currentRecipe.ovenSetting, this);
+    }
+
+    public void SetOvenResult(bool success)
+    {
+        ovenSuccess = success;
+        FindObjectOfType<TartTopping>().StartTopping(currentRecipe.toppings, this);
+    }
+
+    public void SetToppingResult(bool success)
+    {
+        toppingSuccess = success;
+    }
+
+    public bool CheckTartResult()
+    {
+        return crustSuccess && ovenSuccess && toppingSuccess;
     }
 }

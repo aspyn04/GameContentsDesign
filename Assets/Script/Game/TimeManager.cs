@@ -13,6 +13,8 @@ public class TimeManager : MonoBehaviour
 
     public event Action OnDayEnded;
 
+    private bool dayEnded = false;
+
     private void Awake()
     {
         if (Instance == null) Instance = this;
@@ -21,18 +23,31 @@ public class TimeManager : MonoBehaviour
 
     void Update()
     {
+        if (dayEnded) return; // 하루가 끝났으면 시간 멈춤
+
         currentTimeInMinutes += Time.deltaTime * gameSpeed;
 
-        if (currentTimeInMinutes >= 1080f) 
+        if (currentTimeInMinutes >= 1080f)
         {
             EndDay();
         }
     }
+
     void EndDay()
     {
+        if (dayEnded) return; // 중복 방지
+
+        dayEnded = true;
         OnDayEnded?.Invoke();
-        currentTimeInMinutes = 480f;
+        Debug.Log("하루가 끝났습니다.");
     }
+
+    public void ResetDay()
+    {
+        currentTimeInMinutes = 480f; // 오전 8시
+        dayEnded = false;
+    }
+
     public string GetCurrentTimeString()
     {
         int hours = (int)(currentTimeInMinutes / 60);
@@ -45,4 +60,8 @@ public class TimeManager : MonoBehaviour
         currentTimeInMinutes = 1080f; // 18:00
     }
 
+    public bool IsDayEnded()
+    {
+        return dayEnded;
+    }
 }
