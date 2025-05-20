@@ -134,6 +134,7 @@ GameObject:
   - component: {fileID: 59069000}
   - component: {fileID: 59068998}
   - component: {fileID: 59068999}
+  - component: {fileID: 59069001}
   m_Layer: 5
   m_Name: script
   m_TagString: Untagged
@@ -203,6 +204,20 @@ MonoBehaviour:
   currentDay: 1
   currentTimeInMinutes: 480
   gameSpeed: 2
+--- !u!114 &59069001
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 59068996}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 79eca85c753dc694cab5b0ede9262b2b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  csvFile: {fileID: 4900000, guid: 77780e3de6df6e64fadf1016f222853b, type: 3}
+  NPCDataList: []
 --- !u!1 &115537243
 GameObject:
   m_ObjectHideFlags: 0
