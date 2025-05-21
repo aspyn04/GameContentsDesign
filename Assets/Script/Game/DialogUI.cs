@@ -1,11 +1,12 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class DialogUI : MonoBehaviour
 {
     public GameObject panel;
-    public Text dialogText;
+    public TextMeshProUGUI dialogText; // 변경된 부분
     public Button nextButton;
     public Button makeTartButton;
     private bool clicked;
