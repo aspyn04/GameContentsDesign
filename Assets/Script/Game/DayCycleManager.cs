@@ -23,13 +23,33 @@ public class DayCycleManager : MonoBehaviour
 
     IEnumerator StartDayRoutine()
     {
-        int day = TimeManager.Instance.currentDay;
+        Debug.Log("StartDayRoutine 진입");
 
-        if (cutsceneManager.HasCutsceneForDay(day))
+        while (TimeManager.Instance == null || TimeManager.Instance.currentDay == 0)
+            yield return null;
+
+        int day = TimeManager.Instance.currentDay;
+        Debug.Log("현재 Day: " + day);
+
+        if (cutsceneManager == null)
         {
-            Time.timeScale = 0f;
-            yield return cutsceneManager.PlayCutscene(day);
-            Time.timeScale = 1f;
+            Debug.LogError("cutsceneManager가 null입니다.");
+        }
+        else
+        {
+            Debug.Log("cutsceneManager 연결 확인됨");
+
+            if (cutsceneManager.HasCutsceneForDay(day))
+            {
+                Debug.Log("컷씬 조건 만족 - 재생 시도");
+                Time.timeScale = 0f;
+                yield return cutsceneManager.PlayCutscene(day);
+                Time.timeScale = 1f;
+            }
+            else
+            {
+                Debug.Log("컷씬 없음");
+            }
         }
 
         npcManager.StartGuestLoop();
