@@ -8,38 +8,40 @@ public class NPCManager : MonoBehaviour
     public TartManager tartManager;
     public DialogUI dialogUI;
 
-    public void StartGuestLoop()
+    public void StartNPCLoop()
     {
-        StartCoroutine(GuestLoopRoutine());
+        StartCoroutine(NPCLoopRoutine());
     }
 
-    IEnumerator GuestLoopRoutine()
+    IEnumerator NPCLoopRoutine()
     {
         while (!TimeManager.Instance.IsDayEnded())
         {
-            NPCData guest = GetRandomGuest();
-            yield return StartCoroutine(HandleGuest(guest));
+            NPCData npc = GetRandomNPC();
+            yield return StartCoroutine(HandleNPC(npc));
             yield return new WaitForSeconds(1f);
         }
     }
 
-    NPCData GetRandomGuest()
+    // 일차별 가져올 NPC 구분 (id로)
+
+    NPCData GetRandomNPC()
     {
         return npcDataList[Random.Range(0, npcDataList.Count)];
     }
 
-    IEnumerator HandleGuest(NPCData guest)
+    IEnumerator HandleNPC(NPCData npc)
     {
-        yield return dialogUI.Show(guest.greetingDialogue);
-        yield return dialogUI.Show(guest.orderDialogue);
+        yield return dialogUI.Show(npc.greetingDialogue);
+        yield return dialogUI.Show(npc.orderDialogue);
         yield return dialogUI.WaitForMakeTartClick();
 
-        tartManager.StartTartMaking(guest);
+        tartManager.StartTartMaking(npc);
 
         yield return new WaitUntil(() => tartManager.IsTartComplete);
 
         bool success = tartManager.CheckTartResult();
-        string result = success ? guest.satisfiedDialogue : guest.unsatisfiedDialogue;
+        string result = success ? npc.satisfiedDialogue : npc.unsatisfiedDialogue;
 
         yield return dialogUI.Show(result);
     }

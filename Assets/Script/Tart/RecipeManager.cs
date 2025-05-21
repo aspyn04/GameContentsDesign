@@ -12,7 +12,7 @@ public class TartRecipe
 }
 
 [CreateAssetMenu(fileName = "RecipeManager", menuName = "Tart/RecipeManager")]
-public class RecipeManager : ScriptableObject
+public class RecipeManager : MonoBehaviour
 {
     public List<TartRecipe> recipes;
 

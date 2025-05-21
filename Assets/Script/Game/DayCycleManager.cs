@@ -10,49 +10,49 @@ public class DayCycleManager : MonoBehaviour
     void Start()
     {
         if (TimeManager.Instance != null)
+        {
             TimeManager.Instance.OnDayEnded += HandleDayEnded;
-
+        }
         StartCoroutine(StartDayRoutine());
     }
 
     private void OnDestroy()
     {
         if (TimeManager.Instance != null)
+        {
             TimeManager.Instance.OnDayEnded -= HandleDayEnded;
+        }
     }
 
     IEnumerator StartDayRoutine()
     {
-        Debug.Log("StartDayRoutine ¡¯¿‘");
-
         while (TimeManager.Instance == null || TimeManager.Instance.currentDay == 0)
+        {
             yield return null;
+        }
 
         int day = TimeManager.Instance.currentDay;
-        Debug.Log("«ˆ¿Á Day: " + day);
 
         if (cutsceneManager == null)
         {
-            Debug.LogError("cutsceneManager∞° null¿‘¥œ¥Ÿ.");
+            // ƒ∆æ¿ ∏≈¥œ¿˙ ø¨∞· æ» µ  
         }
+
         else
         {
-            Debug.Log("cutsceneManager ø¨∞· »Æ¿Œµ ");
-
             if (cutsceneManager.HasCutsceneForDay(day))
             {
-                Debug.Log("ƒ∆æ¿ ¡∂∞« ∏∏¡∑ - ¿Áª˝ Ω√µµ");
                 Time.timeScale = 0f;
                 yield return cutsceneManager.PlayCutscene(day);
                 Time.timeScale = 1f;
             }
             else
             {
-                Debug.Log("ƒ∆æ¿ æ¯¿Ω");
+                // ƒ∆æ¿ æ¯¿Ω
             }
         }
 
-        npcManager.StartGuestLoop();
+        npcManager.StartNPCLoop();
     }
 
     void HandleDayEnded()
@@ -66,11 +66,17 @@ public class DayCycleManager : MonoBehaviour
         Time.timeScale = 1f;
         TimeManager.Instance.currentDay++;
         TimeManager.Instance.ResetDay(); 
+
         endOfDayPanel.SetActive(false);
 
         if (TimeManager.Instance.currentDay > 30)
-            Debug.Log("∞‘¿” ¡æ∑·!");
+        {
+            //∞‘¿” ¡æ∑·
+        }
+
         else
+        {
             StartCoroutine(StartDayRoutine());
+        }
     }
 }

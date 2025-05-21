@@ -21,7 +21,7 @@ public class NPCData
 
 public class NPCDataManager : MonoBehaviour
 {
-    public TextAsset csvFile; // 인스펙터에서 할당
+    public TextAsset csvFile; 
     public List<NPCData> NPCDataList = new List<NPCData>();
 
     void Start()
@@ -33,24 +33,21 @@ public class NPCDataManager : MonoBehaviour
     {
         if (csvFile == null)
         {
-            Debug.LogError("CSV 파일이 없습니다!");
-            return;
+            // csv 파일이 없음
         }
 
         string[] lines = csvFile.text.Split('\n');
 
-        for (int i = 1; i < lines.Length; i++) // 첫 줄은 헤더니까 건너뜀
+        for (int i = 1; i < lines.Length; i++) // -> 첫 줄 건너 뜀
         {
             string line = lines[i].Trim();
-            if (string.IsNullOrEmpty(line)) continue;
-
-            string[] values = line.Split(',');
-
-            if (values.Length < 8)
+            if (string.IsNullOrEmpty(line))
             {
-                Debug.LogWarning("데이터가 부족합니다: " + line);
                 continue;
             }
+
+                string[] values = line.Split(',');
+
 
             NPCData data = new NPCData()
             {
@@ -68,6 +65,6 @@ public class NPCDataManager : MonoBehaviour
             NPCDataList.Add(data);
         }
 
-        Debug.Log("손님 데이터 로드 완료: " + NPCDataList.Count + "명");
+        Debug.Log("NPC Data: " + NPCDataList.Count);
     }
 }

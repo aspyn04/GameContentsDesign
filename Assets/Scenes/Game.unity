@@ -1553,7 +1553,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   npcDataList: []
-  tartManager: {fileID: 0}
+  tartManager: {fileID: 1190705535}
   dialogUI: {fileID: 1245059001}
 --- !u!114 &564933327
 MonoBehaviour:
@@ -3043,8 +3043,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1056212391}
+  - component: {fileID: 1056212392}
   m_Layer: 5
-  m_Name: GameObject
+  m_Name: Recipe
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3070,6 +3071,19 @@ RectTransform:
   m_AnchoredPosition: {x: -41.300022, y: -190.00005}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1056212392
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1056212390}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a0436bf8e46057a4ba41924f80fd045a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  recipes: []
 --- !u!1 &1147107182
 GameObject:
   m_ObjectHideFlags: 0
@@ -3216,7 +3230,7 @@ GameObject:
   - component: {fileID: 1190705534}
   - component: {fileID: 1190705535}
   m_Layer: 5
-  m_Name: GameObject
+  m_Name: Tart
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3257,7 +3271,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f0a508b2615f56143881a50b5803b69b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  recipeManager: {fileID: 0}
+  recipeManager: {fileID: 1056212392}
 --- !u!1 &1245058999
 GameObject:
   m_ObjectHideFlags: 0
