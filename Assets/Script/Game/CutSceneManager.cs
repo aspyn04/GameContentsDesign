@@ -11,7 +11,7 @@ public class CutsceneManager : MonoBehaviour
 
     public bool HasCutsceneForDay(int day)
     {
-        return day == 1 || day == 2 || day == 10;
+        return day == 1; //|| day == 2 || day == 10;
     }
 
     public IEnumerator PlayCutscene(int day)

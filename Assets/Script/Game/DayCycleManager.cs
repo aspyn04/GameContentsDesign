@@ -6,6 +6,7 @@ public class DayCycleManager : MonoBehaviour
     [SerializeField] private GameObject endOfDayPanel;
     [SerializeField] private CutsceneManager cutsceneManager;
     [SerializeField] private NPCManager npcManager;
+    [SerializeField] private EndingManager endingManager;
 
     void Start()
     {
@@ -71,7 +72,7 @@ public class DayCycleManager : MonoBehaviour
 
         if (TimeManager.Instance.currentDay > 30)
         {
-            //게임 종료
+            endingManager.Ending();
         }
 
         else

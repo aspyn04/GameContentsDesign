@@ -4,15 +4,31 @@ using UnityEngine;
 
 public class ResourceManager : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+
+    public static ResourceManager Instance;
+
+    public int cheese = 0;
+    public int star = 0;
+
+    private void Awake()
     {
-        
+        if (Instance == null) Instance = this;
+        else Destroy(gameObject);
     }
 
-    // Update is called once per frame
-    void Update()
+    public void AddCheese(int amount)
     {
-        
+        cheese += amount;
+    }
+
+    public void AddStar(int amount)
+    {
+        star += amount;
+    }
+
+    public void ResetResources()
+    {
+        cheese = 0;
+        star = 0;
     }
 }
