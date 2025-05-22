@@ -1908,7 +1908,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   currentDay: 1
   currentTimeInMinutes: 480
-  gameSpeed: 2
+  gameSpeed: 100
 --- !u!1 &663815230
 GameObject:
   m_ObjectHideFlags: 0

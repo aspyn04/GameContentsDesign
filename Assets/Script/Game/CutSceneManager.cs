@@ -11,12 +11,11 @@ public class CutsceneManager : MonoBehaviour
 
     public bool HasCutsceneForDay(int day)
     {
-        return day == 1; //|| day == 2 || day == 10;
+        return day == 0; //|| day == 6 || day == 12 || day == 18 || day == 24;
     }
 
     public IEnumerator PlayCutscene(int day)
     {
-        Debug.Log("ÄÆ¾À È°¼ºÈ­µÊ");
         cutscenePanel.SetActive(true);
         videoPlayer.Stop(); 
 
@@ -24,24 +23,19 @@ public class CutsceneManager : MonoBehaviour
 
         videoPlayer.loopPointReached += OnVideoFinished;
         videoPlayer.Prepare();
+
         while (!videoPlayer.isPrepared)
         {
-            Debug.Log("Preparing...");
             yield return null;
         }
 
-        Debug.Log("Prepared. Duration: " + videoPlayer.length + " seconds");
-
         videoPlayer.Play();
-        Debug.Log("Play È£ÃâµÊ, isPlaying: " + videoPlayer.isPlaying);
-
 
         while (!isFinished)
         {
             yield return null;
         }
 
-        Debug.Log("¿µ»ó Àç»ý ¿Ï·á");
         cutscenePanel.SetActive(false);
 
         videoPlayer.loopPointReached -= OnVideoFinished;

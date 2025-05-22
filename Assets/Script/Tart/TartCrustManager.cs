@@ -5,7 +5,7 @@ using TMPro;
 
 public class TartCrustManager : MonoBehaviour
 {
-    [Header("버튼 프리팹 (a ~ f)")]
+    [Header("")]
     [SerializeField] private GameObject prefabA;
     [SerializeField] private GameObject prefabB;
     [SerializeField] private GameObject prefabC;
@@ -13,7 +13,7 @@ public class TartCrustManager : MonoBehaviour
     [SerializeField] private GameObject prefabE;
     [SerializeField] private GameObject prefabF;
 
-    [Header("버튼이 배치될 슬롯 위치 (Empty Object 6개)")]
+    [Header("")]
     [SerializeField] private List<Transform> slotPositions;
 
     [Header("UI 패널 오브젝트")]
@@ -27,6 +27,7 @@ public class TartCrustManager : MonoBehaviour
     [Header("테스트 모드")]
     [SerializeField] private bool testMode = false;
 
+    private TartManager tartManager;
     private Dictionary<string, GameObject> prefabMap;
     private Dictionary<Button, string> buttonToName = new();
     private Dictionary<Button, Image> buttonToImage = new();
@@ -35,17 +36,22 @@ public class TartCrustManager : MonoBehaviour
     private List<Button> correctOrder = new();
     private List<Button> selectedHistory = new();
 
+    private int clickCount = 0;
+    private bool crustCorrect = false;
+
     private void Start()
     {
         if (testMode)
         {
             List<string> testOrder = new List<string> { "a", "b", "c", "d", "e", "f" };
-            Init(testOrder);
+            Init(testOrder, null);
         }
     }
 
-    public void Init(List<string> crustOrder)
+    public void Init(List<string> crustOrder, TartManager caller)
     {
+        tartManager = caller;
+
         prefabMap = new Dictionary<string, GameObject>
         {
             { "a", prefabA },
@@ -61,6 +67,9 @@ public class TartCrustManager : MonoBehaviour
 
         if (tartCrustUI != null) tartCrustUI.SetActive(true);
         if (tartOvenUI != null) tartOvenUI.SetActive(false);
+
+        clickCount = 0;
+        crustCorrect = false;
     }
 
     void SpawnButtons(List<string> crustOrder)
@@ -113,6 +122,9 @@ public class TartCrustManager : MonoBehaviour
 
     void OnClick(Button btn)
     {
+        if (clickCount >= 6)
+            return;
+
         bool isOn = !buttonState[btn];
         buttonState[btn] = isOn;
         buttonToImage[btn].color = isOn ? selectedColor : defaultColor;
@@ -124,18 +136,25 @@ public class TartCrustManager : MonoBehaviour
 
         if (IsCorrectOrder())
         {
+            crustCorrect = true;
             Debug.Log("현재까지 순서 맞음: " + GetSequence(selectedHistory));
-
-            if (selectedHistory.Count == correctOrder.Count)
-            {
-                Debug.Log("크러스트 정답 완료");
-                if (tartCrustUI != null) tartCrustUI.SetActive(false);
-                if (tartOvenUI != null) tartOvenUI.SetActive(true);
-            }
         }
         else
         {
             Debug.Log("순서 틀림: " + GetSequence(selectedHistory));
+        }
+
+        clickCount++;
+
+        if (clickCount >= 6)
+        {
+            Debug.Log("6개 클릭 완료. 결과: " + crustCorrect);
+
+            if (tartCrustUI != null) tartCrustUI.SetActive(false);
+            if (tartOvenUI != null) tartOvenUI.SetActive(true);
+
+            if (tartManager != null)
+                tartManager.SetCrustResult(crustCorrect);
         }
     }
 
