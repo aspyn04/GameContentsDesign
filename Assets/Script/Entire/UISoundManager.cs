@@ -5,9 +5,8 @@ using UnityEngine;
 public class UISoundManager : MonoBehaviour
 {
     public static UISoundManager Instance;
-
+    [SerializeField] private AudioClip npcSpawnSound;
     [SerializeField] private AudioClip clickSound;
-    [SerializeField] private AudioClip hoverSound;
 
     private AudioSource audioSource;
 
@@ -23,6 +22,7 @@ public class UISoundManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
 
         audioSource = gameObject.AddComponent<AudioSource>();
+        audioSource.volume = 0.4f;
         audioSource.playOnAwake = false;
     }
 
@@ -31,5 +31,9 @@ public class UISoundManager : MonoBehaviour
         if (clickSound != null)
             audioSource.PlayOneShot(clickSound);
     }
-
+    public void PlayNPCSpawn()
+    {
+        if (npcSpawnSound != null)
+            audioSource.PlayOneShot(npcSpawnSound);
+    }
 }

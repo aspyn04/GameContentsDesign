@@ -1,14 +1,20 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
+
 
 public class TitleButtonController : MonoBehaviour
 {
+
     [SerializeField] private GameObject creditPanel;
+    [SerializeField] private Button startButton;
+    [SerializeField] private GameObject startButtonImageScript; // 버튼 GameObject 전체
+
     private bool isCreditOpen = false;
 
     void Start()
     {
-        BGMManager.Instance?.PlayTitleMusic();
+        BGMManager.Instance?.PlayMusic();
 
         if (creditPanel != null)
             creditPanel.SetActive(false);
@@ -26,14 +32,12 @@ public class TitleButtonController : MonoBehaviour
 
     public void OnClickStart()
     {
+        startButtonImageScript.SetActive(false);
+        startButton.interactable = false; // 버튼 비활성화
         UISoundManager.Instance?.PlayClick();
         BGMManager.Instance?.StopMusic();
-        SceneManager.LoadScene(1);
+        SceneFadeOut.Instance?.FadeToScene(1); 
     }
-
-    public void OnClickSettings() { }
-
-    public void OnClickExit() { Application.Quit(); }
 
     public void OnClickCredit()
     {

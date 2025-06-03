@@ -48,7 +48,7 @@ public class UIManager : MonoBehaviour
 
     private void UpdateTimeText()
     {
-        timeText.text = $"Time {TimeManager.Instance.GetCurrentTimeString()}";
+        timeText.text = $"{TimeManager.Instance.GetCurrentTimeString()}";
         dayText.text = $"Day {TimeManager.Instance.currentDay}";
     }
 }

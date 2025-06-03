@@ -10,6 +10,8 @@ public class DayCycleManager : MonoBehaviour
 
     void Start()
     {
+        BGMManager.Instance?.PlayMusic();
+
         if (TimeManager.Instance != null)
         {
             TimeManager.Instance.OnDayEnded += HandleDayEnded;
