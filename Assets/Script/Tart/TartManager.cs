@@ -17,8 +17,6 @@ public class TartManager : MonoBehaviour
         // 임시로 바로 시작
         Debug.Log("TartManager 테스트 시작");
 
-        List<string> testCrustOrder = new List<string> { "a", "b", "c", "d", "e", "f" };
-
         // TartCrustManager 실행
         var crustManager = FindObjectOfType<TartCrustManager>();
         if (crustManager != null)
@@ -45,6 +43,7 @@ public class TartManager : MonoBehaviour
 
     */
     // 테스트할 때는 주석 처리했지만, 에러 없이 빌드하려면 메서드는 남겨야 합니다.
+
     public void StartTartMaking(NPCData npc)
     {
         Debug.LogWarning("StartTartMaking()은 현재 테스트용으로 비활성화되어 있습니다.");
