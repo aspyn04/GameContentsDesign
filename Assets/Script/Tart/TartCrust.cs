@@ -4,97 +4,58 @@ using UnityEngine.UI;
 
 public class TartCrust : MonoBehaviour
 {
-    [Header("Correct order (a → b → c → d → e → f)")]
+    [Header("정답 순서대로 배열된 버튼 (예: a, b, c, d, …)")]
     [SerializeField] private List<Button> correctOrder = new List<Button>();
 
-    [Header("All ingredient buttons (any order)")]
+    [Header("모든 재료 버튼 (순서는 상관없음)")]
     [SerializeField] private List<Button> ingredientButtons = new List<Button>();
 
-    [Header("Next-stage button")]
+    [Header("다음 단계 버튼")]
     [SerializeField] private Button nextButton;
 
-    [Header("Panel containing all ingredient buttons")]
+    [Header("재료 단계 전체 UI 패널")]
     [SerializeField] private GameObject panelObject;
 
-    [Header("Default color for unselected buttons")]
+    [Header("기본 색상 (비활성)")]
     [SerializeField] private Color defaultColor = Color.white;
 
-    [Header("Color for selected buttons")]
+    [Header("선택된 버튼 색상")]
     [SerializeField] private Color selectedColor = Color.yellow;
 
     private TartManager tartManagerRef;
     private bool isInitialized = false;
 
-    // 버튼별 on/off 상태를 저장
     private Dictionary<Button, bool> buttonState = new Dictionary<Button, bool>();
-
-    // 사용자가 켠 순서대로 담은 리스트
     private List<Button> selectedHistory = new List<Button>();
 
-    /// <summary>
-    /// Init이 호출되면 ingredientButtons 위치를 서로 섞은 뒤,
-    /// 클릭 리스너와 초기 상태를 설정합니다.
-    /// </summary>
     public void Init(List<string> unused, TartManager manager)
     {
         tartManagerRef = manager;
         isInitialized = true;
 
+        // 히스토리 및 상태 초기화
         selectedHistory.Clear();
         buttonState.Clear();
 
-        // 1) ingredientButtons에 있는 모든 버튼의 원래 위치(anchoredPosition)를 수집
-        List<Vector2> originalPositions = new List<Vector2>();
-        foreach (var btn in ingredientButtons)
-        {
-            RectTransform rt = btn.GetComponent<RectTransform>();
-            originalPositions.Add(rt.anchoredPosition);
-        }
-
-        // 2) 위치 리스트를 섞는다
-        ShuffleList(originalPositions);
-
-        // 3) 섞인 위치를 ingredientButtons에 순서대로 재할당
-        for (int i = 0; i < ingredientButtons.Count; i++)
-        {
-            RectTransform rt = ingredientButtons[i].GetComponent<RectTransform>();
-            rt.anchoredPosition = originalPositions[i];
-        }
-
-        // 4) 각 버튼 상태 초기화 및 클릭 리스너 연결
+        // 각 버튼에 클릭 리스너 달기, 색 초기화
         foreach (var btn in ingredientButtons)
         {
             buttonState[btn] = false;
             Image img = btn.GetComponent<Image>();
-            if (img != null)
-                img.color = defaultColor;
+            if (img != null) img.color = defaultColor;
 
             btn.onClick.RemoveAllListeners();
             btn.onClick.AddListener(() => OnIngredientClicked(btn));
         }
 
-        // 5) Next 버튼 초기화
+        // Next 버튼 초기화
         nextButton.onClick.RemoveAllListeners();
         nextButton.onClick.AddListener(OnNextClicked);
         nextButton.interactable = false;
 
-        // 6) 패널 활성화
+        // 패널 활성화
         if (panelObject != null)
             panelObject.SetActive(true);
-    }
-
-    /// <summary>
-    /// 리스트 요소를 무작위로 섞는 유틸리티 함수
-    /// </summary>
-    private void ShuffleList<T>(List<T> list)
-    {
-        for (int i = 0; i < list.Count; i++)
-        {
-            int rand = Random.Range(i, list.Count);
-            T temp = list[i];
-            list[i] = list[rand];
-            list[rand] = temp;
-        }
     }
 
     private void OnIngredientClicked(Button btn)
@@ -104,17 +65,14 @@ public class TartCrust : MonoBehaviour
         bool isOn = !buttonState[btn];
         buttonState[btn] = isOn;
 
-        // 시각적 토글 표시: 색 변경
+        // 시각적 토글 표시
         Image img = btn.GetComponent<Image>();
-        if (img != null)
-            img.color = isOn ? selectedColor : defaultColor;
+        if (img != null) img.color = isOn ? selectedColor : defaultColor;
 
-        if (isOn)
-            selectedHistory.Add(btn);
-        else
-            selectedHistory.Remove(btn);
+        if (isOn) selectedHistory.Add(btn);
+        else selectedHistory.Remove(btn);
 
-        // correctOrder.Count 개수 이상 켜지면 Next 활성화
+        // correctOrder.Count 개수 이상 선택되면 Next 활성화
         nextButton.interactable = (selectedHistory.Count >= correctOrder.Count);
     }
 
@@ -123,7 +81,6 @@ public class TartCrust : MonoBehaviour
         if (!isInitialized) return;
 
         bool success = false;
-
         if (selectedHistory.Count == correctOrder.Count)
         {
             success = true;
@@ -137,14 +94,8 @@ public class TartCrust : MonoBehaviour
             }
         }
 
-        Debug.Log(
-            "[TartCrust] Selected = [" +
-            GetSequence(selectedHistory) +
-            "], Correct = [" +
-            GetSequence(correctOrder) +
-            "], Result = " +
-            success
-        );
+        Debug.Log($"TartCrust: 선택된 순서=[{GetSequence(selectedHistory)}], " +
+                  $"정답 순서=[{GetSequence(correctOrder)}], 결과={success}");
 
         if (panelObject != null)
             panelObject.SetActive(false);
