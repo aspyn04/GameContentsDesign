@@ -771,6 +771,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   titleBGM: {fileID: 8300000, guid: 39e3ad01858d60f44b9f628d281d806a, type: 3}
+  masterVolume: 1
   fadeOutDuration: 2.4
 --- !u!114 &1425849867
 MonoBehaviour:
@@ -784,8 +785,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a311947fd37aa874394befca0510b4b0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  npcSpawnSound: {fileID: 0}
   clickSound: {fileID: 8300000, guid: 570bb61d4cdd4394fad23b89c1c64f00, type: 3}
+  uiVolume: 0.3
 --- !u!1 &1499814913
 GameObject:
   m_ObjectHideFlags: 0

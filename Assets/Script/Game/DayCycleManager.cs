@@ -25,11 +25,6 @@ public class DayCycleManager : MonoBehaviour
 
         // 시작할 때엔 EndOfDayPanel과 fadeImage 둘 다 꺼둡니다
         endOfDayPanel.SetActive(false);
-        if (fadeImage != null)
-        {
-            fadeImage.gameObject.SetActive(true);
-            fadeImage.color = new Color(0f, 0f, 0f, 0f);
-        }
 
         if (TimeManager.Instance != null)
             TimeManager.Instance.OnDayEnded += HandleDayEnded;
