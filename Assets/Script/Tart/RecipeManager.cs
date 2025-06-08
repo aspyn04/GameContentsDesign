@@ -47,7 +47,7 @@ public class RecipeManager : MonoBehaviour
                 ingredients = new List<string>()
             };
 
-            // 2~4번째 컬럼에 재료 ID가 들어있으면 추가
+            // 3~4번째 컬럼에 재료 ID가 들어있으면 추가
             for (int j = 2; j < 5 && j < cols.Length; j++)
             {
                 string ing = cols[j].Trim();

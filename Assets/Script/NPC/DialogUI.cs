@@ -4,12 +4,8 @@ using UnityEngine.UI;
 using TMPro;
 
 /// <summary>
-/// 대사(Dialog) UI를 관리하는 클래스.
-/// NPC 이미지 반환용 GetNPCImageObject() 메서드를 추가했습니다.
-/// </summary>
-/// <summary>
-/// 대사(Dialog) UI를 담당합니다.
-/// NPC 이미지 반환용 GetNPCImageObject() 메서드를 추가했습니다.
+/// 대사(Dialog) UI를 관리합니다.
+/// NPC 이미지를 세팅하고, 대사/타르트 제작 버튼 흐름을 제공합니다.
 /// </summary>
 public class DialogUI : MonoBehaviour
 {
@@ -22,12 +18,11 @@ public class DialogUI : MonoBehaviour
     [SerializeField] private Image npcImage;
 
     /// <summary>
-    /// NPC ID를 기반으로 Resources/Images/NPC 폴더에서 스프라이트를 로드하여 npcImage에 할당하고 활성화.
-    /// npcImage.gameObject를 반환합니다.
+    /// NPC ID에 대응하는 스프라이트를 로드해서 보여주고, 이미지 오브젝트를 반환합니다.
     /// </summary>
     public GameObject SetNPCImage(string npcID)
     {
-        string path = $"Image/NPC/{npcID.Trim()}"; // Resources/Images/NPC/{npcID}.png
+        string path = $"Image/NPC/{npcID.Trim()}";
         Sprite sprite = Resources.Load<Sprite>(path);
 
         if (sprite != null)
@@ -45,7 +40,7 @@ public class DialogUI : MonoBehaviour
     }
 
     /// <summary>
-    /// npcImage.gameObject를 반환합니다. (null 가능)
+    /// NPC 이미지 오브젝트를 반환합니다(없으면 null).
     /// </summary>
     public GameObject GetNPCImageObject()
     {
@@ -53,16 +48,18 @@ public class DialogUI : MonoBehaviour
     }
 
     /// <summary>
-    /// 대사 패널을 켜고 message를 보여준다. “다음” 버튼 클릭까지 대기.
+    /// 대사 패널을 켜고 메시지를 띄운 뒤, “다음” 버튼 클릭을 대기합니다.
+    /// 클릭하면 버튼만 숨기고 반환합니다.
     /// </summary>
     public IEnumerator Show(string message)
     {
-        dialogPanel.SetActive(true);
-        dialogText.text = message;
+        if (dialogPanel != null)
+            dialogPanel.SetActive(true);
 
-        bool clicked = false;
+        dialogText.text = message;
         dialogNextButton.gameObject.SetActive(true);
 
+        bool clicked = false;
         dialogNextButton.onClick.RemoveAllListeners();
         dialogNextButton.onClick.AddListener(() =>
         {
@@ -76,8 +73,8 @@ public class DialogUI : MonoBehaviour
     }
 
     /// <summary>
-    /// “타르트 만들기” 버튼을 활성화하고 클릭까지 대기.
-    /// 클릭 시 tartTable 활성화.
+    /// “타르트 만들기” 버튼을 켜고 클릭을 대기합니다.
+    /// 클릭하면 버튼은 숨기고, tartTable을 보여줍니다.
     /// </summary>
     public IEnumerator WaitForMakeTartClick()
     {
@@ -98,5 +95,32 @@ public class DialogUI : MonoBehaviour
         });
 
         yield return new WaitUntil(() => clicked);
+    }
+
+    /// <summary>
+    /// NPC 이미지를 숨깁니다.
+    /// </summary>
+    public void HideNPCImage()
+    {
+        if (npcImage != null)
+            npcImage.gameObject.SetActive(false);
+    }
+
+    /// <summary>
+    /// 대사 패널을 숨깁니다.
+    /// </summary>
+    public void HideDialogPanel()
+    {
+        if (dialogPanel != null)
+            dialogPanel.SetActive(false);
+    }
+
+    /// <summary>
+    /// 토스트 제작 테이블 UI를 숨깁니다.
+    /// </summary>
+    public void HideTartTable()
+    {
+        if (tartTable != null)
+            tartTable.SetActive(false);
     }
 }

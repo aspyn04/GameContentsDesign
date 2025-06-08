@@ -9,6 +9,10 @@ public class BGMManager : MonoBehaviour
     [Header("재생할 배경 음악 클립")]
     [SerializeField] private AudioClip titleBGM;
 
+    [Header("마스터 볼륨 (0 = 무음, 1 = 최대)")]
+    [Range(0f, 1f)]
+    [SerializeField] private float masterVolume = 1f;
+
     [Header("페이드 아웃 시간 (초)")]
     [SerializeField] private float fadeOutDuration = 2f;
 
@@ -16,7 +20,6 @@ public class BGMManager : MonoBehaviour
 
     void Awake()
     {
-        // 싱글턴 설정
         if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
@@ -26,11 +29,19 @@ public class BGMManager : MonoBehaviour
         Instance = this;
         DontDestroyOnLoad(gameObject);
 
-        // AudioSource 직접 생성
         audioSource = gameObject.AddComponent<AudioSource>();
         audioSource.loop = true;
         audioSource.playOnAwake = false;
-        audioSource.volume = 1f;
+        audioSource.volume = masterVolume;
+    }
+
+    /// <summary>
+    /// 인스펙터에서 슬라이더로 볼륨 조정 시 즉시 반영
+    /// </summary>
+    private void OnValidate()
+    {
+        if (audioSource != null)
+            audioSource.volume = masterVolume;
     }
 
     public void PlayMusic()
@@ -43,9 +54,9 @@ public class BGMManager : MonoBehaviour
 
         audioSource.clip = titleBGM;
         audioSource.mute = false;
-        audioSource.volume = 1f;
+        audioSource.volume = masterVolume;
         audioSource.Play();
-        Debug.Log("배경음악 재생 시작");
+        Debug.Log("배경음악 재생 시작, 볼륨=" + masterVolume);
     }
 
     public void StopMusic()
@@ -77,4 +88,39 @@ public class BGMManager : MonoBehaviour
         audioSource.mute = true;
         Debug.Log("페이드 아웃 완료 및 음소거 처리");
     }
+
+    /// <summary>
+    /// 런타임에 볼륨을 변경하고 즉시 적용합니다.
+    /// </summary>
+    public void SetMasterVolume(float volume)
+    {
+        masterVolume = Mathf.Clamp01(volume);
+        if (audioSource != null && audioSource.isPlaying)
+            audioSource.volume = masterVolume;
+    }
+    /// <summary>
+    /// BGM 일시정지
+    /// </summary>
+    public void PauseMusic()
+    {
+        if (audioSource != null && audioSource.isPlaying)
+        {
+            audioSource.Pause();
+            Debug.Log("배경음악 일시정지");
+        }
+    }
+
+    /// <summary>
+    /// BGM 재개
+    /// </summary>
+    public void ResumeMusic()
+    {
+        if (audioSource != null && !audioSource.isPlaying)
+        {
+            audioSource.UnPause();
+            Debug.Log("배경음악 재개");
+        }
+    }
+
+    public float GetMasterVolume() => masterVolume;
 }

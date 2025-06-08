@@ -12,8 +12,8 @@ public class EndingManager : MonoBehaviour
 
     public void Ending()
     {
-        int cheese = ResourceManager.Instance.cheese;
-        int stars = ResourceManager.Instance.star;
+        int cheese = GoodsManager.Instance.totalCheese;
+        int stars = GoodsManager.Instance.totalStar;
 
         if (cheese >= 10 && stars >= 10)
         {

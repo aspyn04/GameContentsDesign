@@ -25,8 +25,8 @@ public class TartOven : MonoBehaviour
     private TartManager tartManagerRef;
     private AudioSource audioSource;
 
-    // Next 버튼이 활성된 이후 눌린 횟수 추적
-    private int nextClickCount = 0;
+    // 오븐 시작 버튼이 눌린 횟수를 추적
+    private int startClickCount = 0;
 
     private void Awake()
     {
@@ -35,21 +35,24 @@ public class TartOven : MonoBehaviour
     }
 
     /// <summary>
-    /// TartManager에서 호출하여 오븐 단계를 시작합니다.
-    /// ovenPanel은 반드시 활성 상태여야 하며, 버튼들만 숨기거나 비활성화합니다.
+    /// TartManager에서 오븐 단계를 시작할 때 호출
     /// </summary>
     public void Init(TartManager manager)
     {
         tartManagerRef = manager;
-        nextClickCount = 0;
+        startClickCount = 0;
 
-        // 오븐 패널 자체는 활성화된 채로 두고, 버튼들만 초기 상태로 설정
+        // 패널 보이기
         if (ovenPanel != null)
             ovenPanel.SetActive(true);
 
+        // 버튼 상태 초기화
         startOvenButton.gameObject.SetActive(true);
         startOvenButton.interactable = true;
+        nextButton.gameObject.SetActive(true);
+        nextButton.interactable = false;
 
+        // 리스너 설정
         startOvenButton.onClick.RemoveAllListeners();
         startOvenButton.onClick.AddListener(OnStartOvenClicked);
 
@@ -59,10 +62,19 @@ public class TartOven : MonoBehaviour
 
     private void OnStartOvenClicked()
     {
-        // 오븐 시작 버튼을 누른 뒤에는 더 이상 누르지 못하게 disable
+        startClickCount++;
+
+        // 두 번 이상 누르면 실패 처리
+        if (startClickCount >= 2)
+        {
+            Debug.Log("TartOven: 시작 버튼이 두 번 눌려 실패 처리");
+            FailOven();
+            return;
+        }
+
+        // 첫 클릭: 굽기 시작
         startOvenButton.interactable = false;
 
-        // 굽기 사운드 루프 재생
         if (bakingLoopClip != null)
         {
             audioSource.clip = bakingLoopClip;
@@ -81,44 +93,44 @@ public class TartOven : MonoBehaviour
         if (audioSource.isPlaying)
             audioSource.Stop();
 
-        // 굽기 완료 사운드 재생
+        // 완료 사운드 재생
         if (finishBakeClip != null)
             audioSource.PlayOneShot(finishBakeClip);
-            startOvenButton.interactable = true;
 
-        // 1) "다음" 버튼만 보이게 활성화
+        // 다음 버튼 표시
         nextButton.interactable = true;
 
         Debug.Log($"TartOven: {bakeDuration}초 경과, 다음 단계 버튼 활성화됨");
     }
 
-    public void OnNextClicked()
+    private void OnNextClicked()
     {
-        // 다단계 실패 처리: 두 번 이상 누르면 실패
-        nextClickCount++;
+        // 성공 처리
+        Debug.Log("TartOven: 다음 버튼 클릭, 오븐 단계 성공 처리");
+        CompleteOven();
+    }
 
-        if (nextClickCount >= 2)
-        {
-            Debug.Log("TartOven: Next 버튼이 두 번 눌려서 실패 처리");
+    private void FailOven()
+    {
+        // UI 정리
+        startOvenButton.gameObject.SetActive(false);
+        nextButton.gameObject.SetActive(false);
+        if (ovenPanel != null)
+            ovenPanel.SetActive(false);
 
-            // 오븐 버튼, 다음 버튼 둘 다 비활성화(숨기기)
-            startOvenButton.gameObject.SetActive(false);
-            nextButton.gameObject.SetActive(false);
+        // 실패 알림
+        tartManagerRef?.OnOvenComplete(false);
+    }
 
-            // 패널 이미지는 그대로 남겨둡니다 (이미지가 요구사항)
-            tartManagerRef?.OnOvenComplete(false);
-        }
-        else
-        {
-            // 첫 번째 클릭 → 성공으로 간주
-            Debug.Log("TartOven: Next 버튼 첫 클릭, 오븐 단계 성공 처리");
+    private void CompleteOven()
+    {
+        // UI 정리
+        startOvenButton.gameObject.SetActive(false);
+        nextButton.gameObject.SetActive(false);
+        if (ovenPanel != null)
+            ovenPanel.SetActive(false);
 
-            // 오븐 버튼, 다음 버튼 둘 다 비활성화(숨기기)
-            startOvenButton.gameObject.SetActive(false);
-            nextButton.gameObject.SetActive(false);
-
-            // 패널 이미지는 그대로 남겨둡니다
-            tartManagerRef?.OnOvenComplete(true);
-        }
+        // 성공 알림
+        tartManagerRef?.OnOvenComplete(true);
     }
 }

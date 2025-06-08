@@ -14,6 +14,8 @@ public class TartManager : MonoBehaviour
     private bool crustSuccess;
     private bool ovenSuccess;
     private bool toppingSuccess;
+    private bool productionDone = false;
+    public System.Action<bool> OnTartProcessFinished;
 
     private void Start()
     {
@@ -21,6 +23,7 @@ public class TartManager : MonoBehaviour
         crustManager.gameObject.SetActive(false);
         ovenManager.gameObject.SetActive(false);
         toppingManager.gameObject.SetActive(false);
+        productionDone = false;
     }
 
     /// 외부(예: NPCManager)에서 호출하여 타르트 제작을 시작합니다.
@@ -52,6 +55,10 @@ public class TartManager : MonoBehaviour
         // 2) 재료 단계 시작
         crustManager.gameObject.SetActive(true);
         crustManager.Init(currentRecipe.ingredients, this);
+
+        productionDone = false;
+        crustSuccess = ovenSuccess = toppingSuccess = false;
+        crustManager.Init(currentRecipe.ingredients, this);
     }
 
     /// TartCrust 단계가 끝나면 호출됩니다.
@@ -75,7 +82,7 @@ public class TartManager : MonoBehaviour
         ovenManager.gameObject.SetActive(false);
 
         toppingManager.gameObject.SetActive(true);
-        toppingManager.Init(currentRecipe.ingredients, crustSuccess && ovenSuccess, this);
+        toppingManager.Init(currentRecipe.ingredients, this);
     }
 
     /// TartTopping 단계가 끝나면 호출됩니다.
@@ -86,10 +93,25 @@ public class TartManager : MonoBehaviour
         Debug.Log("TartManager: 토핑 단계 결과 = " + (success ? "성공" : "실패") + ", 최종 성공 = " + finalSuccess);
 
         toppingManager.gameObject.SetActive(false);
+        productionDone = true;     // 여기서 제작 완료 플래그 올림
 
-        // 필요하다면 여기에 추가 로직을 넣으세요
+        OnTartProcessFinished?.Invoke(finalSuccess);
+        
+        if (finalSuccess == true)
+        {
+            GoodsManager.Instance.AddCheese(100);
+            GoodsManager.Instance.AddStar(2);
+        }
+        else
+        {
+            GoodsManager.Instance.AddCheese(20);
+        }
     }
+    public bool IsProductionDone => productionDone;
 
+    /// <summary>
+    /// 최종 성공 여부 (모든 단계 성공)
+    /// </summary>
     public bool IsTartComplete => currentRecipe != null && crustSuccess && ovenSuccess && toppingSuccess;
     public bool CheckTartResult() => currentRecipe != null && crustSuccess && ovenSuccess && toppingSuccess;
 }

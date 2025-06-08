@@ -5,63 +5,96 @@ using UnityEngine.UI;
 
 public class TartTopping : MonoBehaviour
 {
-    [Header("토핑용 Toggle 목록")]
-    [SerializeField] private List<Toggle> toppingToggles;
+    [Header("토핑용 버튼들 (이름을 재료 ID 문자열로 설정)")]
+    [SerializeField] private List<Button> toppingButtons = new List<Button>();
 
-    [Header("다음 버튼")]
+    [Header("다음 단계 버튼")]
     [SerializeField] private Button nextButton;
 
     [Header("토핑 UI 패널")]
     [SerializeField] private GameObject panelObject;
 
-    private List<string> requiredIngredients;
-    private bool priorSuccess;
+    [Header("버튼 기본 색상")]
+    [SerializeField] private Color defaultColor = Color.white;
+
+    [Header("버튼 선택 색상")]
+    [SerializeField] private Color selectedColor = Color.green;
+
     private TartManager tartManagerRef;
+    private List<string> requiredIngredients;
+    private Dictionary<Button, bool> buttonState = new Dictionary<Button, bool>();
     private bool isInitialized = false;
-    
-    public void Init(List<string> recipeIngredients, bool crustWasSuccessful, TartManager manager)
+
+    /// <summary>
+    /// recipeIngredients: CSV에서 읽어온, 이 타르트가 필요로 하는 재료 ID 문자열 목록
+    /// </summary>
+    public void Init(List<string> recipeIngredients, TartManager manager)
     {
         requiredIngredients = new List<string>(recipeIngredients);
-        priorSuccess = crustWasSuccessful;
         tartManagerRef = manager;
         isInitialized = true;
 
-        if (panelObject != null)
-            panelObject.SetActive(true);
+        // 상태 초기화
+        buttonState.Clear();
+        foreach (var btn in toppingButtons)
+        {
+            buttonState[btn] = false;
 
+            // 시각 초기화
+            var img = btn.GetComponent<Image>();
+            if (img != null) img.color = defaultColor;
+
+            // 클릭 리스너 재설정
+            btn.onClick.RemoveAllListeners();
+            btn.onClick.AddListener(() => OnToppingButtonClicked(btn));
+        }
+
+        // Next 버튼은 항상 활성
+        nextButton.interactable = true;
         nextButton.onClick.RemoveAllListeners();
         nextButton.onClick.AddListener(OnNextClicked);
+
+        // 패널 활성
+        if (panelObject != null)
+            panelObject.SetActive(true);
+    }
+
+    private void OnToppingButtonClicked(Button btn)
+    {
+        if (!isInitialized) return;
+
+        // 토글 상태 변경
+        bool isOn = !buttonState[btn];
+        buttonState[btn] = isOn;
+
+        // 색상 표시
+        var img = btn.GetComponent<Image>();
+        if (img != null)
+            img.color = isOn ? selectedColor : defaultColor;
     }
 
     private void OnNextClicked()
     {
         if (!isInitialized) return;
 
-        bool success = false;
+        // 사용자가 켠 버튼들의 이름 리스트
+        var selected = buttonState
+            .Where(kvp => kvp.Value)
+            .Select(kvp => kvp.Key.gameObject.name)
+            .ToList();
 
-        if (!priorSuccess)
-        {
-            success = false;
-        }
-        else
-        {
-            List<string> selectedList = new List<string>();
-            foreach (var tog in toppingToggles)
-            {
-                if (tog.isOn)
-                    selectedList.Add(tog.gameObject.name);
-            }
+        // 성공: 개수 일치 && 모두 requiredIngredients에 포함 && 추가재료 없음
+        bool success = selected.Count == requiredIngredients.Count
+                       && !selected.Except(requiredIngredients).Any();
 
-            success = (selectedList.Count == requiredIngredients.Count)
-                      && !selectedList.Except(requiredIngredients).Any();
-        }
+        Debug.Log($"TartTopping: 선택=[{string.Join(", ", selected)}], " +
+                  $"필요=[{string.Join(", ", requiredIngredients)}], 성공={success}");
 
-        Debug.Log($"TartTopping: 선택된 토핑=[{string.Join(", ", toppingToggles.Where(t => t.isOn).Select(t => t.gameObject.name))}], " +
-                  $"필요=[{string.Join(", ", requiredIngredients)}], 결과={success}");
-
+        // 패널 닫기
         if (panelObject != null)
             panelObject.SetActive(false);
 
+        // 결과 전달
         tartManagerRef?.OnToppingComplete(success);
     }
 }

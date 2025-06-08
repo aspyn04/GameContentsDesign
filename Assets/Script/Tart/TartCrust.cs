@@ -33,14 +33,17 @@ public class TartCrust : MonoBehaviour
         tartManagerRef = manager;
         isInitialized = true;
 
-        // 히스토리 및 상태 초기화
         selectedHistory.Clear();
         buttonState.Clear();
 
-        // 각 버튼에 클릭 리스너 달기, 색 초기화
+        // 1. ingredientButtons의 위치 랜덤 섞기
+        ShuffleButtonPositions();
+
+        // 2. 버튼 색상 초기화 및 클릭 리스너 등록
         foreach (var btn in ingredientButtons)
         {
             buttonState[btn] = false;
+
             Image img = btn.GetComponent<Image>();
             if (img != null) img.color = defaultColor;
 
@@ -48,12 +51,12 @@ public class TartCrust : MonoBehaviour
             btn.onClick.AddListener(() => OnIngredientClicked(btn));
         }
 
-        // Next 버튼 초기화
+        // 3. Next 버튼 초기화
         nextButton.onClick.RemoveAllListeners();
         nextButton.onClick.AddListener(OnNextClicked);
         nextButton.interactable = false;
 
-        // 패널 활성화
+        // 4. UI 패널 표시
         if (panelObject != null)
             panelObject.SetActive(true);
     }
@@ -65,14 +68,15 @@ public class TartCrust : MonoBehaviour
         bool isOn = !buttonState[btn];
         buttonState[btn] = isOn;
 
-        // 시각적 토글 표시
+        // 색상 변경
         Image img = btn.GetComponent<Image>();
         if (img != null) img.color = isOn ? selectedColor : defaultColor;
 
-        if (isOn) selectedHistory.Add(btn);
-        else selectedHistory.Remove(btn);
+        if (isOn)
+            selectedHistory.Add(btn);
+        else
+            selectedHistory.Remove(btn);
 
-        // correctOrder.Count 개수 이상 선택되면 Next 활성화
         nextButton.interactable = (selectedHistory.Count >= correctOrder.Count);
     }
 
@@ -81,6 +85,7 @@ public class TartCrust : MonoBehaviour
         if (!isInitialized) return;
 
         bool success = false;
+
         if (selectedHistory.Count == correctOrder.Count)
         {
             success = true;
@@ -94,8 +99,8 @@ public class TartCrust : MonoBehaviour
             }
         }
 
-        Debug.Log($"TartCrust: 선택된 순서=[{GetSequence(selectedHistory)}], " +
-                  $"정답 순서=[{GetSequence(correctOrder)}], 결과={success}");
+        Debug.Log($"TartCrust: 선택된 순서 = [{GetSequence(selectedHistory)}], " +
+                  $"정답 순서 = [{GetSequence(correctOrder)}], 결과 = {success}");
 
         if (panelObject != null)
             panelObject.SetActive(false);
@@ -108,6 +113,41 @@ public class TartCrust : MonoBehaviour
         List<string> names = new List<string>();
         foreach (var b in list)
             names.Add(b.gameObject.name);
-        return string.Join(" -> ", names);
+        return string.Join(" → ", names);
     }
+
+    /// <summary>
+    /// ingredientButtons의 위치를 셔플합니다.
+    /// </summary>
+    private void ShuffleButtonPositions()
+    {
+        // a, b 위치 교환
+        Button aButton = ingredientButtons.Find(b => b.name == "a");
+        Button bButton = ingredientButtons.Find(b => b.name == "b");
+
+        if (aButton != null && bButton != null)
+        {
+            Vector3 tempPos = aButton.transform.localPosition;
+            aButton.transform.localPosition = bButton.transform.localPosition;
+            bButton.transform.localPosition = tempPos;
+        }
+
+        // c, d, e, f 섞기
+        List<Button> groupButtons = ingredientButtons.FindAll(b =>
+            b.name == "c" || b.name == "d" || b.name == "e" || b.name == "f");
+
+        List<Vector3> positions = new List<Vector3>();
+        foreach (var btn in groupButtons)
+            positions.Add(btn.transform.localPosition);
+
+        for (int i = 0; i < positions.Count; i++)
+        {
+            int rand = Random.Range(i, positions.Count);
+            (positions[i], positions[rand]) = (positions[rand], positions[i]);
+        }
+
+        for (int i = 0; i < groupButtons.Count; i++)
+            groupButtons[i].transform.localPosition = positions[i];
+    }
+
 }
