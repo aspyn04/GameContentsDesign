@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -8,6 +9,8 @@ using UnityEngine.UI;
 /// </summary>
 public class NPCManager : MonoBehaviour
 {
+    private List<string> shownNPCIDs = new List<string>();
+
     [Header("데이터 참조")]
     public List<NPCData> npcDataList;
     public NPCDataManager npcDataManager;
@@ -56,23 +59,50 @@ public class NPCManager : MonoBehaviour
         }
     }
 
+    public void HideNPCUI()
+    {
+        if (npcObject != null)
+            npcObject.SetActive(false);
+
+        dialogUI?.HideDialogPanel();
+    }
+
     private NPCData GetRandomNPC()
     {
         int day = TimeManager.Instance.currentDay;
-        int minID = day <= 10 ? 2011001 : 2011009;
-        int maxID = day <= 10 ? 2011008 : 2011026;
 
-        var candidates = npcDataList.FindAll(npc =>
+        List<string> targetNPCIDs;
+
+        if (day == 1)
+            targetNPCIDs = new List<string> { "2001001", "2011005", "2011018", "2011016" };
+        else if (day >= 2 && day <= 5)
+            targetNPCIDs = new List<string> { "2001001", "2011005", "2011018", "2011016", "2011003", "2011009", "2011020" };
+        else
         {
-            string s = npc.npcID.Trim();
-            if (int.TryParse(s, out int id))
-                return id >= minID && id <= maxID;
-            Debug.LogWarning($"NPC ID 파싱 실패: '{npc.npcID}'");
-            return false;
-        });
+            int minID = day <= 10 ? 2011001 : 2011009;
+            int maxID = day <= 10 ? 2011008 : 2011026;
 
-        if (candidates.Count == 0) return null;
-        return candidates[Random.Range(0, candidates.Count)];
+            targetNPCIDs = npcDataList.FindAll(npc =>
+            {
+                if (int.TryParse(npc.npcID.Trim(), out int id))
+                    return id >= minID && id <= maxID;
+                return false;
+            }).Select(npc => npc.npcID).ToList();
+        }
+
+        // 중복 방지: 이미 등장한 NPC 제외
+        var availableNPCs = targetNPCIDs.Except(shownNPCIDs).ToList();
+
+        if (availableNPCs.Count == 0)
+        {
+            Debug.LogWarning("모든 가능한 NPC가 이미 등장했습니다.");
+            return null;
+        }
+
+        string selectedNPCID = availableNPCs[Random.Range(0, availableNPCs.Count)];
+        shownNPCIDs.Add(selectedNPCID);
+
+        return npcDataList.Find(npc => npc.npcID == selectedNPCID);
     }
 
     private IEnumerator HandleNPC(NPCData npc)
@@ -158,4 +188,10 @@ public class NPCManager : MonoBehaviour
         }
         rect.anchoredPosition = to;
     }
+
+    public void OnDayEnd()
+    {
+        shownNPCIDs.Clear();
+    }
+
 }

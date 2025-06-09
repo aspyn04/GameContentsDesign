@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+// TimeManager.cs
 using UnityEngine;
 
 public class TimeManager : MonoBehaviour
@@ -10,10 +11,10 @@ public class TimeManager : MonoBehaviour
     public int currentDay = 1;
     public float currentTimeInMinutes = 480f;
     public float gameSpeed = 2f;
-
     public event Action OnDayEnded;
 
     private bool dayEnded = false;
+    private bool pauseForMiniGame = false;    // ← 미니게임 중 멈추기
 
     private void Awake()
     {
@@ -23,45 +24,41 @@ public class TimeManager : MonoBehaviour
 
     void Update()
     {
-        if (dayEnded) return; // 하루가 끝났으면 시간 멈춤
+        // 하루 끝났거나, 미니게임에 의해 일시정지면 시간 누적 안 함
+        if (dayEnded || pauseForMiniGame) return;
 
         currentTimeInMinutes += Time.deltaTime * gameSpeed;
-
         if (currentTimeInMinutes >= 1080f)
-        {
             EndDay();
-        }
     }
 
-    void EndDay()
+    private void EndDay()
     {
-        if (dayEnded) return; // 중복 방지
-
+        if (dayEnded) return;
         dayEnded = true;
         OnDayEnded?.Invoke();
-        Debug.Log("하루가 끝났습니다.");
     }
 
     public void ResetDay()
     {
-        currentTimeInMinutes = 480f; // 오전 8시
+        currentTimeInMinutes = 480f;
         dayEnded = false;
     }
 
+    public bool IsDayEnded() => dayEnded;
+
     public string GetCurrentTimeString()
     {
-        int hours = (int)(currentTimeInMinutes / 60);
-        int minutes = (int)(currentTimeInMinutes % 60);
-        return $"{hours:D2}:{minutes:D2}";
+        int h = (int)(currentTimeInMinutes / 60);
+        int m = (int)(currentTimeInMinutes % 60);
+        return $"{h:D2}:{m:D2}";
     }
 
-    public void SkipToEndOfDay()
-    {
-        currentTimeInMinutes = 1080f; // 18:00
-    }
+    public void SkipToEndOfDay() => currentTimeInMinutes = 1080f;
 
-    public bool IsDayEnded()
-    {
-        return dayEnded;
-    }
+    // ================================================
+    // 미니게임 진입 전후로 호출할 메서드들
+    // ================================================
+    public void PauseForMiniGame() => pauseForMiniGame = true;
+    public void ResumeAfterMiniGame() => pauseForMiniGame = false;
 }

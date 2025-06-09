@@ -107,6 +107,17 @@ public class TartManager : MonoBehaviour
             GoodsManager.Instance.AddCheese(20);
         }
     }
+    public GameObject crustPanel;
+    public GameObject ovenPanel;
+    public GameObject toppingPanel;
+
+    public void HideAllPanels()
+    {
+        crustPanel?.SetActive(false);
+        ovenPanel?.SetActive(false);
+        toppingPanel?.SetActive(false);
+    }
+
     public bool IsProductionDone => productionDone;
 
     /// <summary>
