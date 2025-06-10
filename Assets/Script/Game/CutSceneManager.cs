@@ -3,7 +3,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.Video;
 
-public class CutsceneManager : MonoBehaviour
+public class CutSceneManager : MonoBehaviour
 {
     [SerializeField] private GameObject cutscenePanel;
     [SerializeField] private VideoPlayer videoPlayer;

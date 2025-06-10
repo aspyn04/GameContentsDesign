@@ -5,7 +5,7 @@ using UnityEngine.UI;
 public class DayCycleManager : MonoBehaviour
 {
     [SerializeField] private RecipeMinigameManager miniGameManager;
-    [SerializeField] private CutsceneManager cutsceneManager;
+    [SerializeField] private CutSceneManager cutsceneManager;
     [SerializeField] private NPCManager npcManager;
     [SerializeField] private EndingManager endingManager;
     [SerializeField] private GameObject endOfDayPanel;
@@ -48,6 +48,7 @@ public class DayCycleManager : MonoBehaviour
 
         if (cutsceneManager != null && cutsceneManager.HasCutsceneForDay(day))
         {
+            Debug.Log("ÄÆ¾À Àç»ý");
             TimeManager.Instance.PauseForMiniGame();
             BGMManager.Instance?.PauseMusic();
             Time.timeScale = 0f;

@@ -96,6 +96,7 @@ public class TartOven : MonoBehaviour
         // 완료 사운드 재생
         if (finishBakeClip != null)
             audioSource.PlayOneShot(finishBakeClip);
+        startOvenButton.interactable = true;
 
         // 다음 버튼 표시
         nextButton.interactable = true;

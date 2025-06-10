@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 public class TartTopping : MonoBehaviour
 {
+
     [Header("토핑용 버튼들 (이름을 재료 ID 문자열로 설정)")]
     [SerializeField] private List<Button> toppingButtons = new List<Button>();
 
@@ -34,30 +35,30 @@ public class TartTopping : MonoBehaviour
         tartManagerRef = manager;
         isInitialized = true;
 
-        // 상태 초기화
         buttonState.Clear();
         foreach (var btn in toppingButtons)
         {
+            var colorScript = btn.GetComponent<ButtonImangeColor>();
+            if (colorScript != null)
+            {
+                colorScript.InitializeButton();      
+                colorScript.ResetButtonState();     
+            }
+
             buttonState[btn] = false;
 
-            // 시각 초기화
-            var img = btn.GetComponent<Image>();
-            if (img != null) img.color = defaultColor;
-
-            // 클릭 리스너 재설정
             btn.onClick.RemoveAllListeners();
             btn.onClick.AddListener(() => OnToppingButtonClicked(btn));
         }
 
-        // Next 버튼은 항상 활성
         nextButton.interactable = true;
         nextButton.onClick.RemoveAllListeners();
         nextButton.onClick.AddListener(OnNextClicked);
 
-        // 패널 활성
         if (panelObject != null)
             panelObject.SetActive(true);
     }
+
 
     private void OnToppingButtonClicked(Button btn)
     {
@@ -77,24 +78,21 @@ public class TartTopping : MonoBehaviour
     {
         if (!isInitialized) return;
 
-        // 사용자가 켠 버튼들의 이름 리스트
         var selected = buttonState
             .Where(kvp => kvp.Value)
             .Select(kvp => kvp.Key.gameObject.name)
             .ToList();
 
-        // 성공: 개수 일치 && 모두 requiredIngredients에 포함 && 추가재료 없음
         bool success = selected.Count == requiredIngredients.Count
                        && !selected.Except(requiredIngredients).Any();
 
         Debug.Log($"TartTopping: 선택=[{string.Join(", ", selected)}], " +
                   $"필요=[{string.Join(", ", requiredIngredients)}], 성공={success}");
 
-        // 패널 닫기
         if (panelObject != null)
             panelObject.SetActive(false);
 
-        // 결과 전달
         tartManagerRef?.OnToppingComplete(success);
     }
+
 }
