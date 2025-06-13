@@ -22,6 +22,14 @@ public class TartCrust : MonoBehaviour
     [Header("선택된 버튼 색상")]
     [SerializeField] private Color selectedColor = Color.yellow;
 
+    [Header("비커 슬롯 (아래에서 위 순서)")]
+    [SerializeField] private List<RawImage> beakerSlots;
+
+    [Header("재료 텍스처 (순서 일치)")]
+    [SerializeField] private List<Texture> ingredientTextures;
+
+    private List<int> selectedIndices = new List<int>();
+
     private TartManager tartManagerRef;
     private bool isInitialized = false;
 
@@ -34,12 +42,13 @@ public class TartCrust : MonoBehaviour
         isInitialized = true;
 
         selectedHistory.Clear();
+        selectedIndices.Clear();
         buttonState.Clear();
 
-        // 1. ingredientButtons의 위치 랜덤 섞기
+        // 위치 셔플
         ShuffleButtonPositions();
 
-        // 2. 버튼 색상 초기화 및 클릭 리스너 등록
+        // 버튼 초기화
         foreach (var btn in ingredientButtons)
         {
             buttonState[btn] = false;
@@ -51,14 +60,16 @@ public class TartCrust : MonoBehaviour
             btn.onClick.AddListener(() => OnIngredientClicked(btn));
         }
 
-        // 3. Next 버튼 초기화
+        // Next 버튼 초기화
         nextButton.onClick.RemoveAllListeners();
         nextButton.onClick.AddListener(OnNextClicked);
         nextButton.interactable = false;
 
-        // 4. UI 패널 표시
+        // 패널 표시
         if (panelObject != null)
             panelObject.SetActive(true);
+
+        UpdateBeakerVisual(); // 초기화 시 비커도 초기화
     }
 
     private void OnIngredientClicked(Button btn)
@@ -72,12 +83,41 @@ public class TartCrust : MonoBehaviour
         Image img = btn.GetComponent<Image>();
         if (img != null) img.color = isOn ? selectedColor : defaultColor;
 
+        // 선택/해제 처리
         if (isOn)
+        {
             selectedHistory.Add(btn);
+            int idx = ingredientButtons.IndexOf(btn);
+            if (idx != -1) selectedIndices.Add(idx);
+        }
         else
+        {
             selectedHistory.Remove(btn);
+            int idx = ingredientButtons.IndexOf(btn);
+            if (idx != -1) selectedIndices.Remove(idx);
+        }
 
         nextButton.interactable = (selectedHistory.Count >= correctOrder.Count);
+
+        UpdateBeakerVisual(); // 비커 시각 갱신
+    }
+
+    private void UpdateBeakerVisual()
+    {
+        for (int i = 0; i < beakerSlots.Count; i++)
+        {
+            if (i < selectedIndices.Count)
+            {
+                int ingredientIdx = selectedIndices[i];
+                beakerSlots[i].texture = ingredientIdx < ingredientTextures.Count ? ingredientTextures[ingredientIdx] : null;
+                beakerSlots[i].enabled = true;
+            }
+            else
+            {
+                beakerSlots[i].texture = null;
+                beakerSlots[i].enabled = false;
+            }
+        }
     }
 
     private void OnNextClicked()
@@ -116,38 +156,35 @@ public class TartCrust : MonoBehaviour
         return string.Join(" → ", names);
     }
 
-    /// <summary>
-    /// ingredientButtons의 위치를 셔플합니다.
-    /// </summary>
     private void ShuffleButtonPositions()
     {
-        // a, b 위치 교환
-        Button aButton = ingredientButtons.Find(b => b.name == "a");
-        Button bButton = ingredientButtons.Find(b => b.name == "b");
-
-        if (aButton != null && bButton != null)
+        List<Button> abGroup = ingredientButtons.FindAll(b => b.name == "a" || b.name == "b");
+        if (abGroup.Count == 2)
         {
-            Vector3 tempPos = aButton.transform.localPosition;
-            aButton.transform.localPosition = bButton.transform.localPosition;
-            bButton.transform.localPosition = tempPos;
+            Vector3 posA = abGroup[0].transform.localPosition;
+            Vector3 posB = abGroup[1].transform.localPosition;
+
+            if (Random.value < 0.5f)
+            {
+                abGroup[0].transform.localPosition = posB;
+                abGroup[1].transform.localPosition = posA;
+            }
         }
 
-        // c, d, e, f 섞기
-        List<Button> groupButtons = ingredientButtons.FindAll(b =>
+        List<Button> cdefGroup = ingredientButtons.FindAll(b =>
             b.name == "c" || b.name == "d" || b.name == "e" || b.name == "f");
 
-        List<Vector3> positions = new List<Vector3>();
-        foreach (var btn in groupButtons)
-            positions.Add(btn.transform.localPosition);
+        List<Vector3> cdefPositions = new List<Vector3>();
+        foreach (var btn in cdefGroup)
+            cdefPositions.Add(btn.transform.localPosition);
 
-        for (int i = 0; i < positions.Count; i++)
+        for (int i = 0; i < cdefPositions.Count; i++)
         {
-            int rand = Random.Range(i, positions.Count);
-            (positions[i], positions[rand]) = (positions[rand], positions[i]);
+            int rand = Random.Range(i, cdefPositions.Count);
+            (cdefPositions[i], cdefPositions[rand]) = (cdefPositions[rand], cdefPositions[i]);
         }
 
-        for (int i = 0; i < groupButtons.Count; i++)
-            groupButtons[i].transform.localPosition = positions[i];
+        for (int i = 0; i < cdefGroup.Count; i++)
+            cdefGroup[i].transform.localPosition = cdefPositions[i];
     }
-
 }

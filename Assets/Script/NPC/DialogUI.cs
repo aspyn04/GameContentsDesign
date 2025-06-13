@@ -22,7 +22,7 @@ public class DialogUI : MonoBehaviour
     /// </summary>
     public GameObject SetNPCImage(string npcID)
     {
-        string path = $"Image/NPC/{npcID.Trim()}";
+        string path = $"Images/NPC/{npcID.Trim()}";
         Sprite sprite = Resources.Load<Sprite>(path);
 
         if (sprite != null)

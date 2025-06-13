@@ -6,7 +6,7 @@ public class ButtonImangeColor : MonoBehaviour,
     IPointerEnterHandler, IPointerExitHandler,
     IPointerDownHandler, IPointerUpHandler
 {
-    public Graphic targetImage;
+    public Graphic targetImage; // 색상이 적용될 자식 이미지
     public Button button;
 
     public Color normalColor = Color.white;
@@ -44,22 +44,26 @@ public class ButtonImangeColor : MonoBehaviour,
         if (button != null)
         {
             button.transition = Selectable.Transition.None;
-            button.onClick.RemoveListener(OnButtonClicked); // ← 기존 리스너 제거
 
+            var btnImage = button.GetComponent<Image>();
+            if (btnImage != null)
+            {
+                btnImage.color = new Color(1f, 1f, 1f, 0f); // 완전 투명 (시각적으로 영향 없음)
+                button.targetGraphic = btnImage; // 클릭 영역 유지
+            }
+
+            button.onClick.RemoveListener(OnButtonClicked);
             button.onClick.AddListener(OnButtonClicked);
+
             Debug.Log($"[START] {name} 버튼 이벤트 연결됨");
-
-
         }
 
         if (targetImage != null)
         {
             targetImage.color = normalColor;
         }
-        else
-        {
-        }
     }
+
     public void InitializeButton()
     {
         if (button == null) return;
@@ -71,10 +75,11 @@ public class ButtonImangeColor : MonoBehaviour,
         {
             btnImage.sprite = null;
             btnImage.color = new Color(1f, 1f, 1f, 0f); // 투명
+            button.targetGraphic = btnImage;
         }
 
-        button.onClick.RemoveListener(OnButtonClicked); // 중복 제거
-        button.onClick.AddListener(OnButtonClicked);    // 다시 연결
+        button.onClick.RemoveListener(OnButtonClicked);
+        button.onClick.AddListener(OnButtonClicked);
 
         ApplyColor(normalColor);
     }
@@ -105,7 +110,7 @@ public class ButtonImangeColor : MonoBehaviour,
     {
         Debug.Log("버튼클릭");
         clickCount++;
-        isActive = (clickCount % 2 == 1); 
+        isActive = (clickCount % 2 == 1);
 
         if (targetImage != null)
             targetImage.color = isActive ? activeColor : disabledColor;
@@ -129,7 +134,7 @@ public class ButtonImangeColor : MonoBehaviour,
         if (button != null)
         {
             Debug.Log($"[{name}] Reset: interactable = true");
-            button.interactable = false; 
+            button.interactable = false;
             button.interactable = true;
         }
     }

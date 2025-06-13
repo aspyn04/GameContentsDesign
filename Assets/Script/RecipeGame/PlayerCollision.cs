@@ -47,9 +47,14 @@ public class PlayerCollision : MonoBehaviour
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if (isInvincible) return;
+
         if (collision.collider.CompareTag("Wall"))
+        {
+            Debug.Log("º®¿¡ ºÎµúÈû");
             TakeDamage();
+        }
     }
+
 
     void TakeDamage()
     {

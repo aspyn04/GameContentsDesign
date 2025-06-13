@@ -1,27 +1,54 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Video;
 
+[System.Serializable]
+public class CutsceneEntry
+{
+    public int day;               // 몇 일차 컷씬인지
+    public VideoClip videoClip;  // 재생할 영상
+}
 public class CutSceneManager : MonoBehaviour
 {
+
+    public static CutSceneManager Instance;
+
     [SerializeField] private GameObject cutscenePanel;
     [SerializeField] private VideoPlayer videoPlayer;
+    [SerializeField] private List<CutsceneEntry> cutsceneEntry = new List<CutsceneEntry>();
 
     private bool isFinished;
 
-    public bool HasCutsceneForDay(int day)
+    private void Awake()
     {
-        // 일차별 컷씬이 필요한 날을 여기에 추가
-        return day == 1;
+        if (Instance == null) Instance = this;
+        else Destroy(gameObject);
     }
 
+    /// <summary>
+    /// 해당 day에 컷씬이 등록되어 있는지 확인
+    /// </summary>
+    public bool HasCutsceneForDay(int day)
+    {
+        return cutsceneEntry.Exists(e => e.day == day && e.videoClip != null);
+    }
+
+    /// <summary>
+    /// 해당 day의 컷씬 실행
+    /// </summary>
     public IEnumerator PlayCutscene(int day)
     {
+        var entry = cutsceneEntry.Find(e => e.day == day && e.videoClip != null);
+        if (entry == null) yield break;
+
         cutscenePanel.SetActive(true);
         isFinished = false;
 
+        videoPlayer.clip = entry.videoClip;
         videoPlayer.loopPointReached += OnVideoFinished;
+
         videoPlayer.Prepare();
         while (!videoPlayer.isPrepared)
             yield return null;

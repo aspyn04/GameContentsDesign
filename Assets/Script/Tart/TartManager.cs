@@ -97,6 +97,7 @@ public class TartManager : MonoBehaviour
 
         OnTartProcessFinished?.Invoke(finalSuccess);
         
+        /*
         if (finalSuccess == true)
         {
             GoodsManager.Instance.AddCheese(100);
@@ -106,6 +107,7 @@ public class TartManager : MonoBehaviour
         {
             GoodsManager.Instance.AddCheese(20);
         }
+        */
     }
     public GameObject crustPanel;
     public GameObject ovenPanel;

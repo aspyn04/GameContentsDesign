@@ -11,6 +11,14 @@ public class NPCSoundManager : MonoBehaviour
     [Range(0f, 1f)]
     [SerializeField] private float npcVolume = 0.6f;
 
+    [Header("슬라임 만족 / 불만족 사운드")]
+    [SerializeField] private AudioClip slimeSatisfied;
+    [SerializeField] private AudioClip slimeUnsatisfied;
+
+    [Header("털덩이 만족 / 불만족 사운드")]
+    [SerializeField] private AudioClip furballSatisfied;
+    [SerializeField] private AudioClip furballUnsatisfied;
+
     private AudioSource audioSource;
 
     void Awake()
@@ -34,6 +42,27 @@ public class NPCSoundManager : MonoBehaviour
     {
         if (npcSpawnSound == null) return;
         audioSource.PlayOneShot(npcSpawnSound, npcVolume);
+    }
+
+    /// <summary>
+    /// NPC 타입과 만족 여부에 따라 사운드 재생
+    /// </summary>
+    public void PlayReactionSound(string npcType, bool isSatisfied)
+    {
+        AudioClip clipToPlay = null;
+
+        switch (npcType.ToLower())
+        {
+            case "slime":
+                clipToPlay = isSatisfied ? slimeSatisfied : slimeUnsatisfied;
+                break;
+            case "furball":
+                clipToPlay = isSatisfied ? furballSatisfied : furballUnsatisfied;
+                break;
+        }
+
+        if (clipToPlay != null)
+            audioSource.PlayOneShot(clipToPlay, npcVolume);
     }
 
     /// <summary>

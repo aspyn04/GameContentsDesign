@@ -5,9 +5,11 @@ using UnityEngine.UI;
 
 public class TartTopping : MonoBehaviour
 {
-
     [Header("토핑용 버튼들 (이름을 재료 ID 문자열로 설정)")]
     [SerializeField] private List<Button> toppingButtons = new List<Button>();
+
+    [Header("중앙에 보여줄 재료 이미지들 (버튼 이름과 이름 일치해야 함)")]
+    [SerializeField] private List<GameObject> toppingImageObjects = new List<GameObject>();
 
     [Header("다음 단계 버튼")]
     [SerializeField] private Button nextButton;
@@ -24,11 +26,9 @@ public class TartTopping : MonoBehaviour
     private TartManager tartManagerRef;
     private List<string> requiredIngredients;
     private Dictionary<Button, bool> buttonState = new Dictionary<Button, bool>();
+    private Dictionary<string, GameObject> toppingImageMap = new Dictionary<string, GameObject>();
     private bool isInitialized = false;
 
-    /// <summary>
-    /// recipeIngredients: CSV에서 읽어온, 이 타르트가 필요로 하는 재료 ID 문자열 목록
-    /// </summary>
     public void Init(List<string> recipeIngredients, TartManager manager)
     {
         requiredIngredients = new List<string>(recipeIngredients);
@@ -36,13 +36,27 @@ public class TartTopping : MonoBehaviour
         isInitialized = true;
 
         buttonState.Clear();
+        toppingImageMap.Clear();
+
+        // 이미지 매핑 (이름 기준으로)
+        foreach (var imgObj in toppingImageObjects)
+        {
+            string key = imgObj.name.ToLower(); // ex: "choco"
+            if (!toppingImageMap.ContainsKey(key))
+                toppingImageMap.Add(key, imgObj);
+
+            imgObj.SetActive(false); // 시작 시 꺼두기
+        }
+
         foreach (var btn in toppingButtons)
         {
+            string id = btn.gameObject.name.ToLower();
+
             var colorScript = btn.GetComponent<ButtonImangeColor>();
             if (colorScript != null)
             {
-                colorScript.InitializeButton();      
-                colorScript.ResetButtonState();     
+                colorScript.InitializeButton();
+                colorScript.ResetButtonState();
             }
 
             buttonState[btn] = false;
@@ -59,19 +73,26 @@ public class TartTopping : MonoBehaviour
             panelObject.SetActive(true);
     }
 
-
     private void OnToppingButtonClicked(Button btn)
     {
         if (!isInitialized) return;
 
-        // 토글 상태 변경
+        string id = btn.gameObject.name.ToLower();
+
+        // 토글 상태
         bool isOn = !buttonState[btn];
         buttonState[btn] = isOn;
 
-        // 색상 표시
+        // 색상 변경
         var img = btn.GetComponent<Image>();
         if (img != null)
             img.color = isOn ? selectedColor : defaultColor;
+
+        // 중앙 이미지 on/off
+        if (toppingImageMap.TryGetValue(id, out GameObject visualObj))
+        {
+            visualObj.SetActive(isOn);
+        }
     }
 
     private void OnNextClicked()
@@ -94,5 +115,4 @@ public class TartTopping : MonoBehaviour
 
         tartManagerRef?.OnToppingComplete(success);
     }
-
 }
