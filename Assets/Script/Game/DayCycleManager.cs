@@ -17,8 +17,10 @@ public class DayCycleManager : MonoBehaviour
 
     private void Start()
     {
-        savedVolume = BGMManager.Instance?.GetMasterVolume() ?? 1f;
-        BGMManager.Instance?.PlayMusic();
+        int day = TimeManager.Instance.currentDay;
+
+        savedVolume = BGMManager_Game.Instance?.GetMasterVolume() ?? 1f;
+        BGMManager_Game.Instance.PlayBGMByDay(day);
         endOfDayPanel.SetActive(false);
         fadeImage.gameObject.SetActive(false);
         TimeManager.Instance.OnDayEnded += HandleDayEnded;
@@ -37,12 +39,12 @@ public class DayCycleManager : MonoBehaviour
         {
             gameUIRoot.SetActive(false);
             TimeManager.Instance.PauseForMiniGame();
-            BGMManager.Instance?.PauseMusic();
+            BGMManager_Game.Instance?.PauseMusic();
 
-            yield return miniGameManager.PlayMiniGame(day);
+            yield return miniGameManager.PlayMiniGame();
 
             TimeManager.Instance.ResumeAfterMiniGame();
-            BGMManager.Instance?.PlayMusic();
+            BGMManager_Game.Instance.PlayBGMByDay(day);
             gameUIRoot.SetActive(true);
         }
 
@@ -50,14 +52,14 @@ public class DayCycleManager : MonoBehaviour
         {
             Debug.Log("컷씬 재생");
             TimeManager.Instance.PauseForMiniGame();
-            BGMManager.Instance?.PauseMusic();
+            BGMManager_Game.Instance?.PauseMusic();
             Time.timeScale = 0f;
 
             yield return cutsceneManager.PlayCutscene(day);
 
             Time.timeScale = 1f;
             TimeManager.Instance.ResumeAfterMiniGame();
-            BGMManager.Instance?.PlayMusic();
+            BGMManager_Game.Instance.PlayBGMByDay(day);
         }
 
 
@@ -70,18 +72,26 @@ public class DayCycleManager : MonoBehaviour
     private IEnumerator EndOfDaySequence()
     {
         fadeImage.gameObject.SetActive(true);
-        float startVol = BGMManager.Instance?.GetMasterVolume() ?? 0f;
+        float startVol = BGMManager_Game.Instance?.GetMasterVolume() ?? 0f;
         float elapsed = 0f;
         while (elapsed < fadeDuration)
         {
             elapsed += Time.unscaledDeltaTime;
             float t = Mathf.Clamp01(elapsed / fadeDuration);
             fadeImage.color = new Color(0, 0, 0, t);
-            BGMManager.Instance?.SetMasterVolume(Mathf.Lerp(startVol, 0f, t));
+            BGMManager_Game.Instance?.SetMasterVolume(Mathf.Lerp(startVol, 0f, t));
             yield return null;
         }
         Time.timeScale = 0f;
         endOfDayPanel.SetActive(true);
+        if (UISoundManager.Instance != null)
+        {
+            UISoundManager.Instance.PlayEnd();
+        }
+        else
+        {
+            Debug.Log("이준노 바보");
+        }
         npcManager.tartManager?.HideAllPanels();   // 타르트 제작 UI 닫기
         npcManager.HideNPCUI();
     }
@@ -90,6 +100,7 @@ public class DayCycleManager : MonoBehaviour
 
     private IEnumerator ProceedToNextDaySequence()
     {
+        GoodsManager.Instance.ResetDaily();
         TimeManager.Instance.currentDay++;
         TimeManager.Instance.ResetDay();
         endOfDayPanel.SetActive(false);
@@ -108,10 +119,9 @@ public class DayCycleManager : MonoBehaviour
 
         npcManager.OnDayEnd(); // ← 여기에 추가
 
-        BGMManager.Instance?.SetMasterVolume(savedVolume);
-        BGMManager.Instance?.PlayMusic();
+        BGMManager_Game.Instance?.SetMasterVolume(savedVolume);
 
-        if (TimeManager.Instance.currentDay > 30)
+        if (TimeManager.Instance.currentDay >= 18)
             endingManager.Ending();
         else
             StartCoroutine(StartDayRoutine());

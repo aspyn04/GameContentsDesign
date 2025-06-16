@@ -2,8 +2,6 @@ using UnityEngine;
 
 public class PlayerCollision : MonoBehaviour
 {
-    private Vector3 startPosition;
-
     [Header("Player Lives UI")]
     public GameObject[] lives;
     public float invincibleDuration = 0.2f;
@@ -13,24 +11,32 @@ public class PlayerCollision : MonoBehaviour
     public AudioClip eatSound;
     private AudioSource audioSource;
 
+    [Header("Spawn Point")]
+    public Transform startPoint; // 각 스테이지에서 Inspector에서 지정
+    private Vector3 initialStartPosition; // 실행 시점에 저장해두는 위치
+
     private int lifeCount;
     private bool isInvincible;
     private float invincibleTimer;
 
-    private TimeSlider timer;
+    private MinigameManager timer;
     private Collider2D playerCollider;
-
-    void Awake()
-    {
-        // 씬 시작 시점에 월드 좌표로 초기 위치를 저장
-        startPosition = transform.position;
-    }
 
     void Start()
     {
+        if (startPoint != null)
+        {
+            initialStartPosition = startPoint.position; // 최초 위치 저장
+        }
+        else
+        {
+            Debug.LogWarning("[PlayerCollision] startPoint not assigned.");
+            initialStartPosition = transform.position; // fallback
+        }
+
         lifeCount = lives.Length;
         audioSource = GetComponent<AudioSource>();
-        timer = FindObjectOfType<TimeSlider>();
+        timer = FindObjectOfType<MinigameManager>();
         playerCollider = GetComponent<Collider2D>();
     }
 
@@ -55,7 +61,6 @@ public class PlayerCollision : MonoBehaviour
         }
     }
 
-
     void TakeDamage()
     {
         if (lifeCount <= 0) return;
@@ -69,7 +74,6 @@ public class PlayerCollision : MonoBehaviour
 
         if (lifeCount <= 0)
         {
-            // 실패 처리
             timer?.FinishFail();
             playerCollider.enabled = false;
         }
@@ -77,19 +81,15 @@ public class PlayerCollision : MonoBehaviour
 
     public void ResetPlayer()
     {
-        // 저장해둔 초기 위치로 정확히 복귀
-        transform.position = startPosition;
+        // 초기 저장 위치로 정확하게 복귀
+        transform.position = initialStartPosition;
 
-        // 라이프 초기화
         lifeCount = lives.Length;
-        for (int i = 0; i < lives.Length; i++)
-            lives[i].SetActive(true);
+        foreach (var life in lives)
+            life.SetActive(true);
 
-        // 무적 상태 해제
         isInvincible = false;
         invincibleTimer = 0f;
-
-        // 콜라이더 재활성화
         playerCollider.enabled = true;
     }
 }

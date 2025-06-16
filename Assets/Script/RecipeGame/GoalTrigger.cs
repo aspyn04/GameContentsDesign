@@ -6,7 +6,7 @@ public class GoalTrigger : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            TimeSlider timer = FindObjectOfType<TimeSlider>();
+            MinigameManager timer = FindObjectOfType<MinigameManager>();
             if (timer != null)
             {
                 timer.ReachGoal();

@@ -41,16 +41,19 @@ public class NPCDataManager : MonoBehaviour
                 npcID = values[0].Trim(),
 
                 // 3) greetingDialogue
-                greetingDialogue = values[2].Trim(),
+                type = values[2].Trim(),
+
+                // 3) greetingDialogue
+                greetingDialogue = values[3].Trim(),
 
                 // 4) orderDialogue
-                orderDialogue = values[3].Trim(),
+                orderDialogue = values[4].Trim(),
 
                 // 5) satisfiedDialogue
-                satisfiedDialogue = values[4].Trim(),
+                satisfiedDialogue = values[5].Trim(),
 
                 // 6) unsatisfiedDialogue
-                unsatisfiedDialogue = values[5].Trim()
+                unsatisfiedDialogue = values[6].Trim()
             };
 
             // 2) orderedTart(¹®ÀÚ¿­) ¡æ recipeID(int) ÆÄ½Ì

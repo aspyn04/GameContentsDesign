@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class NPCSoundManager : MonoBehaviour
@@ -8,16 +7,23 @@ public class NPCSoundManager : MonoBehaviour
 
     [Header("NPC 등장 사운드")]
     [SerializeField] private AudioClip npcSpawnSound;
-    [Range(0f, 1f)]
-    [SerializeField] private float npcVolume = 0.6f;
+    [Range(0f, 1f)][SerializeField] private float npcSpawnVolume = 0.6f;
 
     [Header("슬라임 만족 / 불만족 사운드")]
     [SerializeField] private AudioClip slimeSatisfied;
+    [Range(0f, 1f)][SerializeField] private float slimeSatisfiedVolume = 0.6f;
     [SerializeField] private AudioClip slimeUnsatisfied;
+    [Range(0f, 1f)][SerializeField] private float slimeUnsatisfiedVolume = 0.6f;
 
     [Header("털덩이 만족 / 불만족 사운드")]
     [SerializeField] private AudioClip furballSatisfied;
+    [Range(0f, 1f)][SerializeField] private float furballSatisfiedVolume = 0.6f;
     [SerializeField] private AudioClip furballUnsatisfied;
+    [Range(0f, 1f)][SerializeField] private float furballUnsatisfiedVolume = 0.6f;
+
+    [Header("치즈 보상 사운드")]
+    [SerializeField] private AudioClip cheeseRewardSound;
+    [Range(0f, 1f)][SerializeField] private float cheeseRewardVolume = 0.6f;
 
     private AudioSource audioSource;
 
@@ -35,43 +41,40 @@ public class NPCSoundManager : MonoBehaviour
         audioSource.playOnAwake = false;
     }
 
-    /// <summary>
-    /// NPC가 등장할 때 호출
-    /// </summary>
     public void PlaySpawn()
     {
-        if (npcSpawnSound == null) return;
-        audioSource.PlayOneShot(npcSpawnSound, npcVolume);
+        if (npcSpawnSound != null)
+            audioSource.PlayOneShot(npcSpawnSound, npcSpawnVolume);
     }
 
-    /// <summary>
-    /// NPC 타입과 만족 여부에 따라 사운드 재생
-    /// </summary>
     public void PlayReactionSound(string npcType, bool isSatisfied)
     {
         AudioClip clipToPlay = null;
+        float volume = 0.6f;
 
         switch (npcType.ToLower())
         {
             case "slime":
                 clipToPlay = isSatisfied ? slimeSatisfied : slimeUnsatisfied;
+                volume = isSatisfied ? slimeSatisfiedVolume : slimeUnsatisfiedVolume;
                 break;
             case "furball":
                 clipToPlay = isSatisfied ? furballSatisfied : furballUnsatisfied;
+                volume = isSatisfied ? furballSatisfiedVolume : furballUnsatisfiedVolume;
                 break;
         }
 
         if (clipToPlay != null)
-            audioSource.PlayOneShot(clipToPlay, npcVolume);
+            audioSource.PlayOneShot(clipToPlay, volume);
     }
 
-    /// <summary>
-    /// 런타임에 NPC 사운드 볼륨을 조절할 때
-    /// </summary>
-    public void SetNPCVolume(float volume)
+    public void PlayCheeseRewardSound()
     {
-        npcVolume = Mathf.Clamp01(volume);
+        if (cheeseRewardSound != null)
+            audioSource.PlayOneShot(cheeseRewardSound, cheeseRewardVolume);
     }
 
-    public float GetNPCVolume() => npcVolume;
+    // 예: 개별 볼륨 접근용 getter (원할 경우)
+    public float GetSlimeSatisfiedVolume() => slimeSatisfiedVolume;
+    public void SetSlimeSatisfiedVolume(float volume) => slimeSatisfiedVolume = Mathf.Clamp01(volume);
 }

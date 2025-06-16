@@ -1,4 +1,5 @@
-using System.Linq;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
@@ -39,30 +40,13 @@ public class ClearSceneController : MonoBehaviour
     public Sprite roastedLeaf;
     public Sprite nutStack;
 
-    void Start()
+    void OnEnable()
     {
-        var mgr = RecipeMinigameManager.Instance;
-        if (mgr == null)
-        {
-            Debug.LogError("RecipeMinigameManager 인스턴스를 찾을 수 없습니다.");
-            HideAll();
-            return;
-        }
+        int day = TimeManager.Instance.currentDay;
 
-        // PanelEntries 프로퍼티 사용
-        var entry = mgr.panelEntries
-                       .FirstOrDefault(e => e.panelObject != null && e.panelObject.activeSelf);
-
-        if (entry == null)
+        switch (day)
         {
-            Debug.LogWarning("활성화된 미니게임 패널이 없습니다.");
-            HideAll();
-            return;
-        }
-
-        switch (entry.day)
-        {
-            case 1:
+            case 2:
                 tartImage.sprite = tart01;
                 tartNameText.text = "호요 반짝 타르트";
                 SetIngredients(
@@ -70,7 +54,8 @@ public class ClearSceneController : MonoBehaviour
                     hoyoJelly, "호요 젤리",
                     galaxyPearl, "은하 펄");
                 break;
-            case 2:
+            case 3:
+                Debug.Log("3일차");
                 tartImage.sprite = tart02;
                 tartNameText.text = "겨울의 파도 타르트";
                 SetIngredients(
@@ -78,7 +63,7 @@ public class ClearSceneController : MonoBehaviour
                     frozenWaveShard, "얼린 파도 조각",
                     brokenShell, "부서진 조개");
                 break;
-            case 3:
+            case 6:
                 tartImage.sprite = tart03;
                 tartNameText.text = "레빗 타르트";
                 SetIngredients(
@@ -86,7 +71,7 @@ public class ClearSceneController : MonoBehaviour
                     ruby, "루비",
                     chocoChip, "초코칩");
                 break;
-            case 4:
+            case 7:
                 tartImage.sprite = tart04;
                 tartNameText.text = "아메디스트 타르트";
                 SetIngredients(
@@ -94,7 +79,7 @@ public class ClearSceneController : MonoBehaviour
                     amethystShard, "자수정 조각",
                     purpleHoney, "보라색 꿀");
                 break;
-            case 5:
+            case 10:
                 tartImage.sprite = tart05;
                 tartNameText.text = "버섯 마리모 타르트";
                 SetIngredients(
@@ -102,7 +87,7 @@ public class ClearSceneController : MonoBehaviour
                     glowMushroom, "야광 버섯",
                     marimo, "마리모");
                 break;
-            case 6:
+            case 11:
                 tartImage.sprite = tart06;
                 tartNameText.text = "데빌 타르트";
                 SetIngredients(
@@ -110,7 +95,7 @@ public class ClearSceneController : MonoBehaviour
                     cookieNcreamMushroom, "쿠앤크 머쉬룸",
                     chocoChip, "초코칩");
                 break;
-            case 7:
+            case 14:
                 tartImage.sprite = tart07;
                 tartNameText.text = "뭉게뭉게 타르트";
                 SetIngredients(
@@ -118,7 +103,7 @@ public class ClearSceneController : MonoBehaviour
                     cloudMarshmallow, "구름 마시멜로",
                     moonFried, "달 튀김");
                 break;
-            case 8:
+            case 15:
                 tartImage.sprite = tart08;
                 tartNameText.text = "불타는 넛츠 타르트";
                 SetIngredients(

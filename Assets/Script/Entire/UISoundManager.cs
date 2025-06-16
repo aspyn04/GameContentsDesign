@@ -8,6 +8,10 @@ public class UISoundManager : MonoBehaviour
 
     [Header("클릭 사운드")]
     [SerializeField] private AudioClip clickSound;
+
+    [Header("종료 사운드")]
+    [SerializeField] private AudioClip endSound;
+
     [Range(0f, 1f)]
     [SerializeField] private float uiVolume = 0.4f;
 
@@ -34,6 +38,15 @@ public class UISoundManager : MonoBehaviour
     {
         if (clickSound == null) return;
         audioSource.PlayOneShot(clickSound, uiVolume);
+    }
+
+    /// <summary>
+    /// UI 종료 효과음 등 재생
+    /// </summary>
+    public void PlayEnd()
+    {
+        if (endSound == null) return;
+        audioSource.PlayOneShot(endSound, uiVolume);
     }
 
     /// <summary>

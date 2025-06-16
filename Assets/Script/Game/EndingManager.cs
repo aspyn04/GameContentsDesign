@@ -1,33 +1,23 @@
 using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.SceneManagement; 
 
 public class EndingManager : MonoBehaviour
 {
-
-    public GameObject goodEndingPanel;
-    public GameObject normalEndingPanel;
-    public GameObject badEndingPanel;
-
     public void Ending()
     {
         int cheese = GoodsManager.Instance.totalCheese;
         int stars = GoodsManager.Instance.totalStar;
 
-        if (cheese >= 10 && stars >= 10)
+        if (cheese >= 3000)
         {
-            goodEndingPanel.SetActive(false);
+            Debug.Log("[EndingManager] Good ending triggered.");
+            SceneManager.LoadScene("Good");
         }
-
-        else if (cheese < 10 && cheese >= 5)
-        {
-            normalEndingPanel.SetActive(false);
-        }
-
         else
         {
-            badEndingPanel.SetActive(false);    
+            Debug.Log("[EndingManager] Bad ending triggered.");
+            SceneManager.LoadScene("Bad");
         }
     }
 }

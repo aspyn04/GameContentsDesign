@@ -12,7 +12,7 @@ public class IngredientTrigger : MonoBehaviour
         if (!other.CompareTag("Player")) return;
 
         // TimeSlider에 재료 수집 알림
-        TimeSlider timer = FindObjectOfType<TimeSlider>();
+        MinigameManager timer = FindObjectOfType<MinigameManager>();
         if (timer != null)
             timer.CollectIngredient(ingredientIndex);
 

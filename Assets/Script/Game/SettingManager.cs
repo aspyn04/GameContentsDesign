@@ -34,7 +34,7 @@ public class SettingManager : MonoBehaviour
             settingPanel.SetActive(true);
             isSettingOpen = true;
             Time.timeScale = 0f; // 시간 정지
-            BGMManager.Instance.PauseMusic();   // 정지
+            BGMManager_Game.Instance.PauseMusic();   // 정지
         }
     }
 
@@ -46,7 +46,7 @@ public class SettingManager : MonoBehaviour
             settingPanel.SetActive(false);
             isSettingOpen = false;
             Time.timeScale = 1f; // 시간 재개
-            BGMManager.Instance.ResumeMusic();  // 재개
+            BGMManager_Game.Instance.ResumeMusic();  // 재개
 
         }
     }

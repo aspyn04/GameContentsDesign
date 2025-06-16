@@ -76,6 +76,8 @@ public class GoodsManager : MonoBehaviour
     /// </summary>
     public void RefreshUI()
     {
+        Debug.Log($"[GoodsManager] RefreshUI: totalCheese={totalCheese}, dailyCheese={dailyCheese}");
+
         if (totalCheeseText != null) totalCheeseText.text = totalCheese.ToString();
         if (totalStarText != null) totalStarText.text = totalStar.ToString();
         if (dailyCheeseText != null) dailyCheeseText.text = dailyCheese.ToString();
