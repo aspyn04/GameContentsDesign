@@ -26,6 +26,14 @@ public class NPCManager : MonoBehaviour
     [SerializeField] private GameObject tartResultObject; // Tart 이미지 보여줄 GameObject
     [SerializeField] private RawImage tartResultImage;     // 실제 이미지 렌더링용
 
+
+    [SerializeField] private GameObject specialSuccessObject1;
+    [SerializeField] private GameObject specialSuccessObject2;
+    [SerializeField] private GameObject specialSuccessObject3;
+    [SerializeField] private GameObject specialSuccessObject4;
+    [SerializeField] private GameObject specialPanel;
+    [SerializeField] private Image specialImage; // UnityEngine.UI.Image
+
     void Start()
     {
 
@@ -96,97 +104,97 @@ public class NPCManager : MonoBehaviour
                 
         else if (day == 3)
         {
-            targetNPCIDs = new List<string> {  "2001001", "2011005", "2011018", "2011016", "2011003", "2011009", "2011020", "2011012", "2011021", "2011026" };
+            targetNPCIDs = new List<string> { "2011012", "2011021", "2001001", "2011003", "2011005", "2011018" };
         }        
         
         else if (day == 4)
         {
-            targetNPCIDs = new List<string> { "2001001", "2011005", "2011018", "2011016", "2011003", "2011009", "2011020", "2011012", "2011021", "2011026" };
+            targetNPCIDs = new List<string> { "2011026", "2011012", "2011009", "2011016", "2011020", "2011003" };
         }
 
 
         // 5일차
         else if (day == 5)
         {
-            targetNPCIDs = new List<string> { "2001001", "2011005", "2011018", "2011016", "2011003", "2011009", "2011020", "2011012", "2011021", "2011026" };
+            targetNPCIDs = new List<string> { "2011021", "2011026", "2011005", "2011009", "2011018", "2011016" };
         }
 
         // 6일차
         else if (day == 6)
         {
-            targetNPCIDs = new List<string> { "2001001", "2011005", "2011012", "2011021", "2011004", "2011009", "2011020", "2011015", "2011003", "2011016" };
+            targetNPCIDs = new List<string> { "2001001", "2011003", "2011012", "2011004", "2011018", "2011021" };
         }
 
         // 7일차
         else if (day == 7)
         {
-            targetNPCIDs = new List<string> { "2011006", "2011007", "2011002", "2011018", "2011024", "2011026", "2011012", "2011003", "2011005", "2011009" };
+            targetNPCIDs = new List<string> { "2011005", "2011020", "2011026", "2011015", "2011002", "2011006" };
         }
 
         // 8일차
         else if (day == 8)
         {
-            targetNPCIDs = new List<string> { "2011015", "2001001", "2011021", "2011004", "2011016", "2011002", "2011006", "2011020", "2011007", "2011018" };
+            targetNPCIDs = new List<string> { "2011016", "2011009", "2011004", "2011007", "2011012", "2001001" };
         }
 
         // 9일차 
         else if (day == 9)
         {
-            targetNPCIDs = new List<string> { "2001004", "2011005", "2011003", "2011012", "2011006", "2011024", "2011016", "2011026", "2011007", "2011018" };
+            targetNPCIDs = new List<string> { "2001004", "2011002", "2011006", "2011009", "2011012", "2011024" };
         }
 
         // 10일차
-        else if (day == 9)
+        else if (day == 10)
         {
-            targetNPCIDs = new List<string> { "2011008", "2011014", "2011011", "2011025", "2011002", "2011004", "2011021", "2001004", "2011020", "2011009" };
+            targetNPCIDs = new List<string> { "2011011", "2011025", "2011014", "2011007", "2011005", "2011003" };
         }
 
         // 11일차
         else if (day == 11)
         {
-            targetNPCIDs = new List<string> { "2011017", "2011008", "2011015", "2011024", "2011006", "2011011", "2011007", "2011014", "2011025", "2011013" };
+            targetNPCIDs = new List<string> { "2011008", "2011017", "2011010", "2011018", "2011006", "2011015" };
         }
 
         // 12일차
         else if (day == 12)
         {
-            targetNPCIDs = new List<string> { "2011001", "2011023", "2001002", "2011017", "2011015", "2011008", "2011002", "2011014", "2011019", "2011009" };
+            targetNPCIDs = new List<string> { "2011019", "2011020", "2011021", "2011024", "2011005", "2011014" };
         }
 
         // 13일차
         else if (day == 13)
         {
-            targetNPCIDs = new List<string> { "2011013", "2011023", "2011001", "2001002", "2011003", "2011010", "2011004", "2011016", "2011025", "2011006" };
+            targetNPCIDs = new List<string> { "2001002", "2011003", "2011002", "2011004", "2011009", "2011016" };
         }       
         
         // 14일차
         else if (day == 14)
         {
-            targetNPCIDs = new List<string> { "2011010", "2011022", "2001003", "2011001", "2011013", "2001004", "2011023", "2011017", "2011015", "2011019" };
+            targetNPCIDs = new List<string> { "2011022", "2001003", "2011010", "2011007", "2011025", "2011012" };
         }
                 
         // 15일차
         else if (day == 15)
         {
-            targetNPCIDs = new List<string> { "2011007", "2001002", "2011014", "2011008", "2011020", "2011022", "2001003", "2011010", "2011023", "2011013" };
+            targetNPCIDs = new List<string> { "2011023", "2011001", "2011013", "2011022", "2011017", "2011005" };
         }
                 
         // 16일차
         else if (day == 16)
         {
-            targetNPCIDs = new List<string> { "2011001", "2011019", "2011017", "2011015", "2011002", "2011006", "2001002", "2011010", "2011022", "2011008" };
+            targetNPCIDs = new List<string> { "2001002", "2011003", "2011008", "2011002", "2001003", "2011001" };
         }
                 
         // 17일차
         else if (day == 17)
         {
-            targetNPCIDs = new List<string> { "2001004", "2011011", "2011025", "2011003", "2011016", "2011001", "2011019", "2001003", "2011009", "2011013" };
+            targetNPCIDs = new List<string> { "2011019", "2011010", "2011023", "2011014", "2011009", "2011015" };
         }  
         
         // 18일차
         else 
         {
-            targetNPCIDs = new List<string> { "2011023", "2011017", "2011014", "2011011", "2011002", "2011007", "2011022", "2001002", "2011015", "2011006" };
+            targetNPCIDs = new List<string> { "2011011", "2011006", "2011013", "2011004", "2011005", "2011024" };
         }
      
 
@@ -227,6 +235,91 @@ public class NPCManager : MonoBehaviour
         bool success = tartManager.CheckTartResult();
         string resultText = success ? npc.satisfiedDialogue : npc.unsatisfiedDialogue;
 
+        if (npc.npcID == "2001001" && success)
+        {
+            if (specialPanel != null && specialImage != null)
+            {
+                // Resources 또는 미리 Sprite 지정 (예시는 Resources 방식)
+                Sprite npcSprite = Resources.Load<Sprite>($"Images/Interior/Rainbow.png");
+                if (npcSprite != null)
+                {
+                    specialImage.sprite = npcSprite;
+                    specialPanel.SetActive(true);
+
+                    // 입력 대기 (아무 곳 클릭 시)
+                    yield return new WaitUntil(() => Input.GetMouseButtonDown(0));
+
+                    specialPanel.SetActive(false);
+
+                    if (specialSuccessObject1 != null)
+                        specialSuccessObject1.SetActive(true);
+                }
+            }
+        }
+        if (npc.npcID == "2001002" && success)
+        {
+            if (specialPanel != null && specialImage != null)
+            {
+                // Resources 또는 미리 Sprite 지정 (예시는 Resources 방식)
+                Sprite npcSprite = Resources.Load<Sprite>($"Images/Interior/NightnMare_2.png");
+                if (npcSprite != null)
+                {
+                    specialImage.sprite = npcSprite;
+                    specialPanel.SetActive(true);
+
+                    // 입력 대기 (아무 곳 클릭 시)
+                    yield return new WaitUntil(() => Input.GetMouseButtonDown(0));
+
+                    specialPanel.SetActive(false);
+
+                    if (specialSuccessObject2 != null)
+                        specialSuccessObject2.SetActive(true);
+                }
+            }
+        }
+        if (npc.npcID == "2001003" && success)
+        {
+            if (specialPanel != null && specialImage != null)
+            {
+                // Resources 또는 미리 Sprite 지정 (예시는 Resources 방식)
+                Sprite npcSprite = Resources.Load<Sprite>($"Images/Interior/Magician.png");
+                if (npcSprite != null)
+                {
+                    specialImage.sprite = npcSprite;
+                    specialPanel.SetActive(true);
+
+                    // 입력 대기 (아무 곳 클릭 시)
+                    yield return new WaitUntil(() => Input.GetMouseButtonDown(0));
+
+                    specialPanel.SetActive(false);
+
+                    if (specialSuccessObject3 != null)
+                        specialSuccessObject3.SetActive(true);
+                }
+            }
+        }       
+        
+        if (npc.npcID == "2001004" && success)
+        {
+            if (specialPanel != null && specialImage != null)
+            {
+                // Resources 또는 미리 Sprite 지정 (예시는 Resources 방식)
+                Sprite npcSprite = Resources.Load<Sprite>($"Images/Interior/NightnMare_1.png");
+                if (npcSprite != null)
+                {
+                    specialImage.sprite = npcSprite;
+                    specialPanel.SetActive(true);
+
+                    // 입력 대기 (아무 곳 클릭 시)
+                    yield return new WaitUntil(() => Input.GetMouseButtonDown(0));
+
+                    specialPanel.SetActive(false);
+
+                    if (specialSuccessObject4 != null)
+                        specialSuccessObject4.SetActive(true);
+                }
+            }
+        }
         Debug.Log($"[NPCManager] 제작 완료 플래그: {tartManager.IsProductionDone}, 성공 여부: {success}");
 
         // 6) 타르트 이미지 표시
