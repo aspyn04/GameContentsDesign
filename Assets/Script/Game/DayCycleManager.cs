@@ -15,6 +15,10 @@ public class DayCycleManager : MonoBehaviour
 
     private float savedVolume;
 
+    private void Awake()
+    {
+        gameUIRoot.SetActive(false); 
+    }
     private void Start()
     {
         int day = TimeManager.Instance.currentDay;
@@ -34,6 +38,7 @@ public class DayCycleManager : MonoBehaviour
             yield return null;
 
         int day = TimeManager.Instance.currentDay;
+        gameUIRoot.SetActive(true);
 
         if (miniGameManager != null && miniGameManager.HasMiniGameForDay(day))
         {
