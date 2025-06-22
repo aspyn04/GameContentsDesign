@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -6,6 +7,7 @@ public class DayCycleManager : MonoBehaviour
 {
     [SerializeField] private RecipeMinigameManager miniGameManager;
     [SerializeField] private CutSceneManager cutsceneManager;
+    [SerializeField] private StoryManager storyManager;
     [SerializeField] private NPCManager npcManager;
     [SerializeField] private EndingManager endingManager;
     [SerializeField] private GameObject endOfDayPanel;
@@ -67,6 +69,25 @@ public class DayCycleManager : MonoBehaviour
             BGMManager_Game.Instance.PlayBGMByDay(day);
         }
 
+        if (storyManager != null && storyManager.HasStoryForDay(day))
+        {
+            Debug.Log($"[StartDayRoutine] Story 시작 (day {day})");
+
+            TimeManager.Instance.PauseForMiniGame();
+            TimeManager.Instance.BlockDayEnd(true); // 
+            BGMManager_Game.Instance?.PauseMusic();
+            Time.timeScale = 0f;
+
+            yield return StartCoroutine(storyManager.PlayStory(day));
+
+            Time.timeScale = 1f;
+            TimeManager.Instance.ResumeAfterMiniGame();   
+            TimeManager.Instance.BlockDayEnd(false);    
+
+            BGMManager_Game.Instance.PlayBGMByDay(day);
+
+            Debug.Log($"[StartDayRoutine] Story 종료 (day {day})");
+        }
 
         gameUIRoot.SetActive(true);
         npcManager.StartNPCLoop();

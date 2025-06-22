@@ -27,13 +27,6 @@ public class NPCManager : MonoBehaviour
     [SerializeField] private RawImage tartResultImage;     // 실제 이미지 렌더링용
 
 
-    [SerializeField] private GameObject specialSuccessObject1;
-    [SerializeField] private GameObject specialSuccessObject2;
-    [SerializeField] private GameObject specialSuccessObject3;
-    [SerializeField] private GameObject specialSuccessObject4;
-    [SerializeField] private GameObject specialPanel;
-    [SerializeField] private Image specialImage; // UnityEngine.UI.Image
-
     void Start()
     {
 
@@ -235,92 +228,6 @@ public class NPCManager : MonoBehaviour
         bool success = tartManager.CheckTartResult();
         string resultText = success ? npc.satisfiedDialogue : npc.unsatisfiedDialogue;
 
-        if (npc.npcID == "2001001" && success)
-        {
-            if (specialPanel != null && specialImage != null)
-            {
-                // Resources 또는 미리 Sprite 지정 (예시는 Resources 방식)
-                Sprite npcSprite = Resources.Load<Sprite>($"Images/Interior/Rainbow.png");
-                if (npcSprite != null)
-                {
-                    specialImage.sprite = npcSprite;
-                    specialPanel.SetActive(true);
-
-                    // 입력 대기 (아무 곳 클릭 시)
-                    yield return new WaitUntil(() => Input.GetMouseButtonDown(0));
-
-                    specialPanel.SetActive(false);
-
-                    if (specialSuccessObject1 != null)
-                        specialSuccessObject1.SetActive(true);
-                }
-            }
-        }
-        if (npc.npcID == "2001002" && success)
-        {
-            if (specialPanel != null && specialImage != null)
-            {
-                // Resources 또는 미리 Sprite 지정 (예시는 Resources 방식)
-                Sprite npcSprite = Resources.Load<Sprite>($"Images/Interior/NightnMare_2.png");
-                if (npcSprite != null)
-                {
-                    specialImage.sprite = npcSprite;
-                    specialPanel.SetActive(true);
-
-                    // 입력 대기 (아무 곳 클릭 시)
-                    yield return new WaitUntil(() => Input.GetMouseButtonDown(0));
-
-                    specialPanel.SetActive(false);
-
-                    if (specialSuccessObject2 != null)
-                        specialSuccessObject2.SetActive(true);
-                }
-            }
-        }
-        if (npc.npcID == "2001003" && success)
-        {
-            if (specialPanel != null && specialImage != null)
-            {
-                // Resources 또는 미리 Sprite 지정 (예시는 Resources 방식)
-                Sprite npcSprite = Resources.Load<Sprite>($"Images/Interior/Magician.png");
-                if (npcSprite != null)
-                {
-                    specialImage.sprite = npcSprite;
-                    specialPanel.SetActive(true);
-
-                    // 입력 대기 (아무 곳 클릭 시)
-                    yield return new WaitUntil(() => Input.GetMouseButtonDown(0));
-
-                    specialPanel.SetActive(false);
-
-                    if (specialSuccessObject3 != null)
-                        specialSuccessObject3.SetActive(true);
-                }
-            }
-        }       
-        
-        if (npc.npcID == "2001004" && success)
-        {
-            if (specialPanel != null && specialImage != null)
-            {
-                // Resources 또는 미리 Sprite 지정 (예시는 Resources 방식)
-                Sprite npcSprite = Resources.Load<Sprite>($"Images/Interior/NightnMare_1.png");
-                if (npcSprite != null)
-                {
-                    specialImage.sprite = npcSprite;
-                    specialPanel.SetActive(true);
-
-                    // 입력 대기 (아무 곳 클릭 시)
-                    yield return new WaitUntil(() => Input.GetMouseButtonDown(0));
-
-                    specialPanel.SetActive(false);
-
-                    if (specialSuccessObject4 != null)
-                        specialSuccessObject4.SetActive(true);
-                }
-            }
-        }
-        Debug.Log($"[NPCManager] 제작 완료 플래그: {tartManager.IsProductionDone}, 성공 여부: {success}");
 
         // 6) 타르트 이미지 표시
         string tartID = success ? npc.recipeID.ToString() : "4001010";

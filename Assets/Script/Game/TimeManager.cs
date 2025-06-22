@@ -22,13 +22,16 @@ public class TimeManager : MonoBehaviour
         else Destroy(gameObject);
     }
 
+    private bool blockDayEnd = false;
+    public void BlockDayEnd(bool block) => blockDayEnd = block;
+
     void Update()
     {
-        // 하루 끝났거나, 미니게임에 의해 일시정지면 시간 누적 안 함
         if (dayEnded || pauseForMiniGame) return;
 
         currentTimeInMinutes += Time.deltaTime * gameSpeed;
-        if (currentTimeInMinutes >= 1080f)
+
+        if (currentTimeInMinutes >= 1080f && !blockDayEnd)
             EndDay();
     }
 
